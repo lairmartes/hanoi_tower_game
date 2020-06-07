@@ -19,20 +19,36 @@ class _PinState extends State<Pin> {
                 children: <Widget>[
                   Stack(
                     children: <Widget>[
-                      Center(
+                      Align(
+                        alignment: Alignment.center,
                         child: SizedBox(
                           width: 10.0,
-                          height: 250.0,
+                          height: 225.0,
                           child: DecoratedBox(
                             decoration: BoxDecoration(
-                              color: Colors.black
+                              color: Colors.grey.shade700
                             ),
                           ),
                         )
                       ),
+
+                        Positioned(
+                          top: 215,
+                          left: _calculateMiddle(MediaQuery.of(context).size.width, 250),
+                          child: SizedBox(
+                            width: 250.0,
+                            height: 10.0,
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                  color: Colors.grey.shade700
+                              ),
+                            ),
+                          ),
+                        ),
+
                       Positioned(
-                        top: 455,
-                        left: 80,
+                        top: 190,
+                        left: _calculateMiddle(MediaQuery.of(context).size.width, 250),
                         child: SizedBox(
                           width: 250,
                           height: 20,
@@ -44,8 +60,8 @@ class _PinState extends State<Pin> {
                         ),
                       ),
                       Positioned(
-                        top: 435,
-                        left: 90,
+                        top: 170,
+                        left: _calculateMiddle(MediaQuery.of(context).size.width, 230),
                         child: SizedBox(
                           width: 230,
                           height: 20,
@@ -57,8 +73,8 @@ class _PinState extends State<Pin> {
                         ),
                       ),
                       Positioned(
-                        top: 415,
-                        left: 100,
+                        top: 150,
+                        left: _calculateMiddle(MediaQuery.of(context).size.width, 210),
                         child: SizedBox(
                           width: 210,
                           height: 20,
@@ -70,8 +86,8 @@ class _PinState extends State<Pin> {
                         ),
                       ),
                       Positioned(
-                        top: 395,
-                        left: 110,
+                        top: 130,
+                        left: _calculateMiddle(MediaQuery.of(context).size.width, 190),
                         child: SizedBox(
                           width: 190,
                           height: 20,
@@ -83,8 +99,8 @@ class _PinState extends State<Pin> {
                         ),
                       ),
                       Positioned(
-                        top: 375,
-                        left: 120,
+                        top: 110,
+                        left: _calculateMiddle(MediaQuery.of(context).size.width, 170),
                         child: SizedBox(
                           width: 170,
                           height: 20,
@@ -96,8 +112,8 @@ class _PinState extends State<Pin> {
                         ),
                       ),
                       Positioned(
-                        top: 355,
-                        left: 130,
+                        top: 90,
+                        left: _calculateMiddle(MediaQuery.of(context).size.width, 150),
                         child: SizedBox(
                           width: 150,
                           height: 20,
@@ -109,8 +125,8 @@ class _PinState extends State<Pin> {
                         ),
                       ),
                       Positioned(
-                        top: 335,
-                        left: 140,
+                        top: 70,
+                        left: _calculateMiddle(MediaQuery.of(context).size.width, 130),
                         child: SizedBox(
                           width: 130,
                           height: 20,
@@ -122,8 +138,8 @@ class _PinState extends State<Pin> {
                         ),
                       ),
                       Positioned(
-                        top: 315,
-                        left: 150,
+                        top: 50,
+                        left: _calculateMiddle(MediaQuery.of(context).size.width, 110),
                         child: SizedBox(
                           width: 110,
                           height: 20,
@@ -135,8 +151,8 @@ class _PinState extends State<Pin> {
                         ),
                       ),
                       Positioned(
-                        top: 295,
-                        left: 160,
+                        top: 30,
+                        left: _calculateMiddle(MediaQuery.of(context).size.width, 90),
                         child: SizedBox(
                           width: 90,
                           height: 20,
@@ -148,8 +164,8 @@ class _PinState extends State<Pin> {
                         ),
                       ),
                       Positioned(
-                        top: 275,
-                        left: 170,
+                        top: 10,
+                        left: _calculateMiddle(MediaQuery.of(context).size.width, 70),
                         child: SizedBox(
                           width: 70,
                           height: 20,
@@ -168,6 +184,8 @@ class _PinState extends State<Pin> {
         ),
     );
   }
+
+  _calculateMiddle(totalWidth, diskWidth) => totalWidth / 2 - ( diskWidth /2 );
 
   _updateFloor() {
     setState(() {
