@@ -22,7 +22,7 @@ class _PinState extends State<Pin> {
                       Center(
                         child: SizedBox(
                           width: 10.0,
-                          height: 480.0,
+                          height: 250.0,
                           child: DecoratedBox(
                             decoration: BoxDecoration(
                               color: Colors.black
