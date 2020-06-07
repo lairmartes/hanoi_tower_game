@@ -20,57 +20,145 @@ class _PinState extends State<Pin> {
                   Stack(
                     children: <Widget>[
                       Center(
-                        child: Image.asset("images/disks/pin.png",),
+                        child: SizedBox(
+                          width: 10.0,
+                          height: 480.0,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: Colors.black
+                            ),
+                          ),
+                        )
                       ),
                       Positioned(
                         top: 455,
-                        left: 75,
-                        child: Image.asset("images/disks/10.png", scale: 3,),
+                        left: 80,
+                        child: SizedBox(
+                          width: 250,
+                          height: 20,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: Colors.redAccent
+                            ),
+                          ),
+                        ),
                       ),
                       Positioned(
                         top: 435,
                         left: 90,
-                        child: Image.asset("images/disks/9.png", scale: 3,),
+                        child: SizedBox(
+                          width: 230,
+                          height: 20,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                                color: Colors.greenAccent
+                            ),
+                          ),
+                        ),
                       ),
                       Positioned(
                         top: 415,
-                        left: 105,
-                        child: Image.asset("images/disks/8.png", scale: 3,),
+                        left: 100,
+                        child: SizedBox(
+                          width: 210,
+                          height: 20,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                                color: Colors.orange
+                            ),
+                          ),
+                        ),
                       ),
                       Positioned(
                         top: 395,
-                        left: 120,
-                        child: Image.asset("images/disks/7.png", scale: 3,),
+                        left: 110,
+                        child: SizedBox(
+                          width: 190,
+                          height: 20,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                                color: Colors.blue
+                            ),
+                          ),
+                        ),
                       ),
                       Positioned(
                         top: 375,
-                        left: 135,
-                        child: Image.asset("images/disks/6.png", scale: 3,),
+                        left: 120,
+                        child: SizedBox(
+                          width: 170,
+                          height: 20,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                                color: Colors.green
+                            ),
+                          ),
+                        ),
                       ),
                       Positioned(
                         top: 355,
-                        left: 150,
-                        child: Image.asset("images/disks/5.png", scale: 3,),
+                        left: 130,
+                        child: SizedBox(
+                          width: 150,
+                          height: 20,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                                color: Colors.purple
+                            ),
+                          ),
+                        ),
                       ),
                       Positioned(
                         top: 335,
-                        left: 165,
-                        child: Image.asset("images/disks/4.png", scale: 3,),
+                        left: 140,
+                        child: SizedBox(
+                          width: 130,
+                          height: 20,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                                color: Colors.lightBlue
+                            ),
+                          ),
+                        ),
                       ),
                       Positioned(
                         top: 315,
-                        left: 180,
-                        child: Image.asset("images/disks/3.png", scale: 3,),
+                        left: 150,
+                        child: SizedBox(
+                          width: 110,
+                          height: 20,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                                color: Colors.red
+                            ),
+                          ),
+                        ),
                       ),
                       Positioned(
                         top: 295,
-                        left: 190,
-                        child: Image.asset("images/disks/2.png", scale: 3,),
+                        left: 160,
+                        child: SizedBox(
+                          width: 90,
+                          height: 20,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                                color: Colors.lightGreen
+                            ),
+                          ),
+                        ),
                       ),
                       Positioned(
                         top: 275,
-                        left: 195,
-                        child: Image.asset("images/disks/1.png", scale: 3,),
+                        left: 170,
+                        child: SizedBox(
+                          width: 70,
+                          height: 20,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                                color: Colors.deepPurple
+                            ),
+                          ),
+                        ),
                       ),
                     ],
                   ),
