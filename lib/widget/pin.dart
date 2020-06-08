@@ -8,17 +8,17 @@ class Pin extends StatefulWidget {
 class _PinState extends State<Pin> {
 
   List<Color> _diskColors = List.unmodifiable([
-    Colors.deepPurple,
-    Colors.lightGreen,
-    Colors.redAccent.shade100,
-    Colors.blueAccent.shade400,
-    Colors.purpleAccent.shade400,
-    Colors.green,
-    Colors.blueAccent.shade100,
-    Colors.orange,
-    Colors.blueAccent.shade700,
-    Colors.redAccent.shade700,
-  ]
+      Colors.purpleAccent.shade100,
+      Colors.greenAccent.shade200,
+      Colors.redAccent.shade100,
+      Colors.blueAccent.shade400,
+      Colors.purpleAccent.shade400,
+      Colors.greenAccent.shade400,
+      Colors.redAccent.shade400,
+      Colors.blueAccent.shade400,
+      Colors.purpleAccent.shade700,
+      Colors.greenAccent.shade700,
+    ]
   );
 
   @override
