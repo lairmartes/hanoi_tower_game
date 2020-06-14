@@ -12,6 +12,12 @@ dependencies:
 
   cupertino_icons: ^0.1.2
 
+  hanoi_tower_control:
+    git:
+      url: git@github.com:lairmartes/hanoi_tower_control.git
+      ref: master
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
