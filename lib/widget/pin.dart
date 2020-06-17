@@ -2,15 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:hanoi_tower_control/hanoi_tower_control.dart';
 
 class Pin extends StatefulWidget {
+
+  final PinDisks _pinDisks;
+
+  Pin(this._pinDisks);
+
   @override
-  _PinState createState() => _PinState();
+  _PinState createState() => _PinState(this._pinDisks);
 }
 
 class _PinState extends State<Pin> {
 
   PinDisks _pinDisks;
 
-  List<Color> _diskColors = List.unmodifiable([
+  _PinState(this._pinDisks);
+
+  final List<Color> _diskColors = List.unmodifiable([
       Colors.purpleAccent.shade100,
       Colors.greenAccent.shade200,
       Colors.redAccent.shade100,
@@ -62,16 +69,28 @@ class _PinState extends State<Pin> {
                           ),
                         ),
 
-                      _pinDisks.disks.elementAt(0) == null ? null : disk(190, _pinDisks.disks.elementAt(0).size, context),
-                      _pinDisks.disks.elementAt(1) == null ? null : disk(170, _pinDisks.disks.elementAt(1).size, context),
-                      _pinDisks.disks.elementAt(2) == null ? null : disk(150, _pinDisks.disks.elementAt(2).size, context),
-                      _pinDisks.disks.elementAt(3) == null ? null : disk(130, _pinDisks.disks.elementAt(3).size, context),
-                      _pinDisks.disks.elementAt(4) == null ? null : disk(110, _pinDisks.disks.elementAt(4).size, context),
-                      _pinDisks.disks.elementAt(5) == null ? null : disk(90, _pinDisks.disks.elementAt(5).size, context),
-                      _pinDisks.disks.elementAt(6) == null ? null : disk(70, _pinDisks.disks.elementAt(6).size, context),
-                      _pinDisks.disks.elementAt(7) == null ? null : disk(50, _pinDisks.disks.elementAt(7).size, context),
-                      _pinDisks.disks.elementAt(8) == null ? null : disk(30, _pinDisks.disks.elementAt(8).size, context),
-                      _pinDisks.disks.elementAt(9) == null ? null : disk(10, _pinDisks.disks.elementAt(9).size, context),
+                      _pinDisks.disks.length > 9 ? disk(190, _pinDisks.disks.elementAt(9).size, context) : disk(10, 8, context),
+                      _pinDisks.disks.length > 8 ? disk(170, _pinDisks.disks.elementAt(8).size, context) : disk(10, 8, context),
+                      _pinDisks.disks.length > 7 ? disk(150, _pinDisks.disks.elementAt(7).size, context) : disk(10, 8, context),
+                      _pinDisks.disks.length > 6 ?  disk(130, _pinDisks.disks.elementAt(6).size, context) : disk(10, 8, context),
+                      _pinDisks.disks.length > 5 ?  disk(110, _pinDisks.disks.elementAt(5).size, context) : disk(10, 8, context),
+                      _pinDisks.disks.length > 4 ? disk(90, _pinDisks.disks.elementAt(4).size, context) : disk(10, 8, context),
+                      _pinDisks.disks.length > 3 ? disk(70, _pinDisks.disks.elementAt(3).size, context) : disk(10, 8, context),
+                      _pinDisks.disks.length > 2 ?  disk(50, _pinDisks.disks.elementAt(2).size, context) : disk(10, 8, context),
+                      _pinDisks.disks.length > 1 ? disk(30, _pinDisks.disks.elementAt(1).size, context) : disk(10, 8, context),
+                      _pinDisks.disks.length > 0 ? disk(10, _pinDisks.disks.elementAt(0).size, context) : disk(10, 8, context),
+/*
+                      _pinDisks.disks.length > 9 ? disk(10, _pinDisks.disks.elementAt(9).size, context) : disk(10, 8, context),
+                      _pinDisks.disks.length > 8 ? disk(30, _pinDisks.disks.elementAt(8).size, context) : disk(10, 8, context),
+                      _pinDisks.disks.length > 7 ? disk(50, _pinDisks.disks.elementAt(7).size, context) : disk(10, 8, context),
+                      _pinDisks.disks.length > 6 ?  disk(70, _pinDisks.disks.elementAt(6).size, context) : disk(10, 8, context),
+                      _pinDisks.disks.length > 5 ? disk(90, _pinDisks.disks.elementAt(5).size, context) : disk(10, 8, context),
+                      _pinDisks.disks.length > 4 ? disk(110, _pinDisks.disks.elementAt(4).size, context) : disk(10, 8, context),
+                      _pinDisks.disks.length > 3 ?  disk(130, _pinDisks.disks.elementAt(3).size, context) : disk(10, 8, context),
+                      _pinDisks.disks.length > 2 ? disk(150, _pinDisks.disks.elementAt(2).size, context) : disk(10, 8, context),
+                      _pinDisks.disks.length > 1 ? disk(170, _pinDisks.disks.elementAt(1).size, context) : disk(10, 8, context),
+                      _pinDisks.disks.length > 0 ? disk(190, _pinDisks.disks.elementAt(0).size, context) : disk(10, 8, context),
+    */
 
                     ],
                   ),
