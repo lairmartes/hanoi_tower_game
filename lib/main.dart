@@ -6,7 +6,7 @@ main() async {
 
   Game game = Game();
 
-  Progress progress = await game.start(5);
+  Progress progress = await game.start(8);
 
   runApp(MaterialApp(home: ui_game.Pin(progress.disksFirstPin())));
 }
