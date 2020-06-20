@@ -33,6 +33,16 @@ void main() {
 
     await expectLater(find.byType(ui_game.Pin), matchesGoldenFile('pin_start_with_max_disks.png'));
   });
+
+  testWidgets('Golden test passes when starts game with zero disks', (WidgetTester tester) async {
+    Game game = Game();
+
+    Progress progress = await game.start(1);
+
+    await tester.pumpWidget(MaterialApp(home: ui_game.Pin(progress.disksSecondPin())));
+
+    await expectLater(find.byType(ui_game.Pin), matchesGoldenFile('pin_start_with_zero_disks.png'));
+  });
   
   testWidgets('Golden test passes when one disk is removed from a pin with 4 disks', (WidgetTester tester) async {
 
