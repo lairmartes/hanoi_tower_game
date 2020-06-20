@@ -17,10 +17,13 @@ dependencies:
       url: git@github.com:lairmartes/hanoi_tower_control.git
       ref: master
 
+  eventify: ^0.1.4
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+  mockito: ^4.1.1
 
 flutter:
 
