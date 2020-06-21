@@ -7,36 +7,36 @@ import 'package:mockito/mockito.dart';
 
 void main() {
   
-  EventEmitter _mockEventEmitter;
-  Game _game;
+  EventEmitter mockEventEmitter;
+  Game game;
 
   setUp(() {
-    _mockEventEmitter = MockEventEmitter();
-    _game = Game();
+    mockEventEmitter = MockEventEmitter();
+    game = Game();
 
   });
   
   test('When pin event is published then call emitter', () async {
-    PinEvent test = PinEvent(_mockEventEmitter);
+    PinEvent test = PinEvent(mockEventEmitter);
 
-    Progress startGame = await _game.start(5);
+    Progress startGame = await game.start(5);
 
     PinDisks pinEvent = startGame.disksFirstPin();
 
     test.firePinChangedEvent(pinEvent);
 
-    verify(_mockEventEmitter.emit(any, test, pinEvent)).called(1);
+    verify(mockEventEmitter.emit(any, test, pinEvent)).called(1);
   });
 
   test('When pin event listener is added then is added to emitter', () async {
-    PinEvent test = PinEvent(_mockEventEmitter);
+    PinEvent test = PinEvent(mockEventEmitter);
 
     Object context = Object();
     EventCallback callback = (ev, context) { print("tnc"); };
 
     test.addPinChangeEventListener(context, callback);
 
-    verify(_mockEventEmitter.on(any, context, callback));
+    verify(mockEventEmitter.on(any, context, callback));
   });
 }
 

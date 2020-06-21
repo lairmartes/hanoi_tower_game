@@ -1,21 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:hanoi_tower_control/hanoi_tower_control.dart';
+import 'package:hanoi_tower_game/events/events.dart';
 
 class Pin extends StatefulWidget {
 
   final PinDisks _pinDisks;
+  final PinEvent _pinEvent;
 
-  Pin(this._pinDisks);
+  Pin(this._pinDisks, this._pinEvent);
 
   @override
-  _PinState createState() => _PinState(this._pinDisks);
+  _PinState createState() => _PinState(this._pinDisks, this._pinEvent);
 }
 
 class _PinState extends State<Pin> {
 
   PinDisks _pinDisks;
 
-  _PinState(this._pinDisks);
+  _PinState(this._pinDisks, PinEvent pinEvent) {
+    pinEvent.addPinChangeEventListener(this, (ev, context) { 
+      updatePin(ev.eventData);
+    });
+  }
 
   final List<Color> _diskColors = List.unmodifiable([
       Colors.purpleAccent.shade100,
