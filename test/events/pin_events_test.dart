@@ -1,7 +1,8 @@
 import 'package:eventify/eventify.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hanoi_tower_control/hanoi_tower_control.dart';
-import 'package:hanoi_tower_game/events/pin_events.dart';
+import 'package:hanoi_tower_game/events/events.dart';
 import 'package:mockito/mockito.dart';
 
 void main() {
@@ -24,7 +25,18 @@ void main() {
 
     test.firePinChangedEvent(pinEvent);
 
-    verify(_mockEventEmitter.emit(PinEvent.pinDiskChangedEvent, test, pinEvent)).called(1);
+    verify(_mockEventEmitter.emit(any, test, pinEvent)).called(1);
+  });
+
+  test('When pin event listener is added then is added to emitter', () async {
+    PinEvent test = PinEvent(_mockEventEmitter);
+
+    Object context = Object();
+    EventCallback callback = (ev, context) { print("tnc"); };
+
+    test.addPinChangeEventListener(context, callback);
+
+    verify(_mockEventEmitter.on(any, context, callback));
   });
 }
 
