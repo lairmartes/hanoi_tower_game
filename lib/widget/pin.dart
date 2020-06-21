@@ -42,6 +42,8 @@ class _PinState extends State<Pin> {
   }
 }
 
+final double reduceDiskFactor = 0.80;
+
 final List<Color> _diskColors = List.unmodifiable([
     Colors.purpleAccent.shade100,
     Colors.greenAccent.shade200,
@@ -58,24 +60,28 @@ final List<Color> _diskColors = List.unmodifiable([
 
 final Color _pinColor = Colors.grey.shade700;
 
-Column _buildPin(BuildContext context, pinDisks) {
-  return Column(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: <Widget>[
-      Stack(
+Stack _buildPin(BuildContext context, pinDisks) {
+  return Stack(
         children: _insertDisks(context, pinDisks),
-      ),
-    ],
-  );
+      );
 }
 
 List<Widget> _insertDisks(BuildContext context, pinDisks) {
+  var availableHeight = MediaQuery.of(context).size.height;
+  if (MediaQuery.of(context).orientation == Orientation.portrait) {
+    availableHeight = availableHeight / 3;
+  }
+
+  var availableWidth = MediaQuery.of(context).size.width;
+  if (MediaQuery.of(context).orientation == Orientation.landscape) {
+    availableWidth = availableWidth / 3;
+  }
   var result =  <Widget>[
     Align(
         alignment: Alignment.center,
         child: SizedBox(
           width: 10.0,
-          height: 225.0,
+          height: availableHeight,
           child: DecoratedBox(
             decoration: BoxDecoration(
                 color: _pinColor
@@ -84,11 +90,10 @@ List<Widget> _insertDisks(BuildContext context, pinDisks) {
         )
     ),
 
-    Positioned(
-      top: 215,
-      left: _calculateMiddle(MediaQuery.of(context).size.width, 250),
+    Align(
+      alignment: Alignment.bottomCenter,
       child: SizedBox(
-        width: 250.0,
+        width: availableWidth * reduceDiskFactor,
         height: 10.0,
         child: DecoratedBox(
           decoration: BoxDecoration(
@@ -100,10 +105,10 @@ List<Widget> _insertDisks(BuildContext context, pinDisks) {
   ];
 
   if (pinDisks != null) {
-    var floor = 190.0;
+    var floor = availableHeight - 30;
     var disks = pinDisks.disks.reversed;
-    disks.forEach((element) {
-      result.add(_disk(floor, element.size, context));
+    disks.forEach((disk) {
+      result.add(_disk(floor, disk.size, availableWidth));
       floor = floor - 20.0;
     });
   }
@@ -111,16 +116,13 @@ List<Widget> _insertDisks(BuildContext context, pinDisks) {
   return result;
 }
 
-_calculateMiddle(totalWidth, diskWidth) => totalWidth / 2 - ( diskWidth / 2 );
+Widget _disk(double positionTop, int diskSize, double availableWidth) {
 
-_calculateDiskWidth(int diskSize) => 250.0 - 20 * ( 10 - diskSize );
-
-Widget _disk(double positionTop, int diskSize, BuildContext context) {
   return Positioned(
     top: positionTop,
-    left: _calculateMiddle(MediaQuery.of(context).size.width, _calculateDiskWidth(diskSize)),
+    left: _calculateMiddle(availableWidth, _calculateDiskWidth(availableWidth, diskSize)),
     child: SizedBox(
-      width: _calculateDiskWidth(diskSize),
+      width: _calculateDiskWidth(availableWidth, diskSize),
       height: 20,
       child: DecoratedBox(
         decoration: BoxDecoration(
@@ -130,3 +132,7 @@ Widget _disk(double positionTop, int diskSize, BuildContext context) {
     ),
   );
 }
+
+_calculateMiddle(totalWidth, diskWidth) => totalWidth / 2 - ( diskWidth / 2 );
+
+_calculateDiskWidth(double availableWidth, int diskSize) => availableWidth * reduceDiskFactor - 20 * ( 10 - diskSize );
