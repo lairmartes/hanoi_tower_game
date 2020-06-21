@@ -55,16 +55,4 @@ void main() {
 
     await expectLater(find.byType(ui_game.Pin), matchesGoldenFile('pin_start_with_zero_disks.png'));
   });
-  
-  testWidgets('Golden test passes when one disk is removed from a pin with 4 disks', (WidgetTester tester) async {
-
-    Game game = Game();
-
-    Progress progressStart = await game.start(4);
-
-    var uiPin = ui_game.Pin(progressStart.disksFirstPin(), pinEvent);
-
-    game.grabFromFirstPin();
-
-  });
 }

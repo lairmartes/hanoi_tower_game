@@ -4,13 +4,13 @@ import 'package:hanoi_tower_game/events/events.dart';
 
 class Pin extends StatefulWidget {
 
-  final PinDisks _pinDisks;
-  final PinEvent _pinEvent;
+  final PinDisks _initialPinDisks;
+  final PinEvent _pinEventController;
 
-  Pin(this._pinDisks, this._pinEvent);
+  Pin(this._initialPinDisks, this._pinEventController);
 
   @override
-  _PinState createState() => _PinState(this._pinDisks, this._pinEvent);
+  _PinState createState() => _PinState(this._initialPinDisks, this._pinEventController);
 }
 
 class _PinState extends State<Pin> {
@@ -29,7 +29,7 @@ class _PinState extends State<Pin> {
       body: Builder(
         builder: (BuildContext context) =>
             Container(
-              child: buildPin(context, this._pinDisks)
+              child: _buildPin(context, this._pinDisks)
             ),
         ),
     );
@@ -56,7 +56,9 @@ final List<Color> _diskColors = List.unmodifiable([
   ]
 );
 
-Column buildPin(BuildContext context, pinDisks) {
+final Color _pinColor = Colors.grey.shade700;
+
+Column _buildPin(BuildContext context, pinDisks) {
   return Column(
     mainAxisAlignment: MainAxisAlignment.center,
     children: <Widget>[
@@ -76,7 +78,7 @@ List<Widget> _insertDisks(BuildContext context, pinDisks) {
           height: 225.0,
           child: DecoratedBox(
             decoration: BoxDecoration(
-                color: Colors.grey.shade700
+                color: _pinColor
             ),
           ),
         )
@@ -90,7 +92,7 @@ List<Widget> _insertDisks(BuildContext context, pinDisks) {
         height: 10.0,
         child: DecoratedBox(
           decoration: BoxDecoration(
-              color: Colors.grey.shade700
+              color: _pinColor
           ),
         ),
       ),
@@ -111,7 +113,7 @@ List<Widget> _insertDisks(BuildContext context, pinDisks) {
 
 _calculateMiddle(totalWidth, diskWidth) => totalWidth / 2 - ( diskWidth / 2 );
 
-double _calculateDiskWidth(int diskSize) => 250.0 - 20 * ( 10 - diskSize );
+_calculateDiskWidth(int diskSize) => 250.0 - 20 * ( 10 - diskSize );
 
 Widget _disk(double positionTop, int diskSize, BuildContext context) {
   return Positioned(
