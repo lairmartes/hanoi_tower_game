@@ -9,13 +9,13 @@ import '../events/events_test.dart';
 
 void main() {
   Game game;
-  PinEvent pinEvent;
+  PinEventController pinEvent;
   EventEmitter mockEventEmitter;
 
   setUp(() {
     game = Game();
     mockEventEmitter = MockEventEmitter();
-    pinEvent = PinEvent(mockEventEmitter);
+    pinEvent = PinEventController(mockEventEmitter);
   });
 
   testWidgets('Golden test passes when starts game with 4 disks', (WidgetTester tester) async {

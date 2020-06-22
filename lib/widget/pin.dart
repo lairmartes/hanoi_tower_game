@@ -5,7 +5,7 @@ import 'package:hanoi_tower_game/events/events.dart';
 class Pin extends StatefulWidget {
 
   final PinDisks _initialPinDisks;
-  final PinEvent _pinEventController;
+  final PinEventController _pinEventController;
 
   Pin(this._initialPinDisks, this._pinEventController);
 
@@ -17,7 +17,7 @@ class _PinState extends State<Pin> {
 
   PinDisks _pinDisks;
 
-  _PinState(this._pinDisks, PinEvent pinEvent) {
+  _PinState(this._pinDisks, PinEventController pinEvent) {
     pinEvent.addPinChangeEventListener(this, (ev, context) { 
       updatePin(ev.eventData);
     });

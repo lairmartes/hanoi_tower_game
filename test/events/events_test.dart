@@ -17,7 +17,7 @@ void main() {
   });
   
   test('When pin event is published then call emitter', () async {
-    PinEvent test = PinEvent(mockEventEmitter);
+    PinEventController test = PinEventController(mockEventEmitter);
 
     Progress startGame = await game.start(5);
 
@@ -29,7 +29,7 @@ void main() {
   });
 
   test('When pin event listener is added then is added to emitter', () async {
-    PinEvent test = PinEvent(mockEventEmitter);
+    PinEventController test = PinEventController(mockEventEmitter);
 
     Object context = Object();
     EventCallback callback = (ev, context) { print("tnc"); };
