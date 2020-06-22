@@ -77,11 +77,12 @@ List<Widget> _insertDisks(BuildContext context, pinDisks) {
     availableWidth = availableWidth / 3;
   }
   var result =  <Widget>[
-    Align(
-        alignment: Alignment.center,
+    Positioned(
+        left: _calculateMiddle(availableWidth, 10),
+        bottom: 10,
         child: SizedBox(
           width: 10.0,
-          height: availableHeight,
+          height: availableHeight * reduceDiskFactor,
           child: DecoratedBox(
             decoration: BoxDecoration(
                 color: _pinColor
@@ -90,8 +91,9 @@ List<Widget> _insertDisks(BuildContext context, pinDisks) {
         )
     ),
 
-    Align(
-      alignment: Alignment.bottomCenter,
+    Positioned(
+      top: availableHeight - 10,
+      left: _calculateMiddle(availableWidth, _calculateDiskWidth(availableWidth, 10)),
       child: SizedBox(
         width: availableWidth * reduceDiskFactor,
         height: 10.0,
