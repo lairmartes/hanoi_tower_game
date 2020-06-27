@@ -55,4 +55,5 @@ void main() {
 
     await expectLater(find.byType(ui_game.Pin), matchesGoldenFile('pin_start_with_zero_disks.png'));
   });
+
 }
