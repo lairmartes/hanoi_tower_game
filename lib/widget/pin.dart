@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:hanoi_tower_control/hanoi_tower_control.dart';
+import 'package:hanoi_tower_control/hanoi_tower_control.dart' as control;
 import 'package:hanoi_tower_game/events/events.dart';
 
 class Pin extends StatefulWidget {
 
-  final PinDisks _initialPinDisks;
+  final control.PinDisks _initialPinDisks;
   final PinEventController _pinEventController;
 
   Pin(this._initialPinDisks, this._pinEventController);
@@ -15,7 +15,7 @@ class Pin extends StatefulWidget {
 
 class _PinState extends State<Pin> {
 
-  PinDisks _pinDisks;
+  control.PinDisks _pinDisks;
 
   _PinState(this._pinDisks, PinEventController pinEvent) {
     pinEvent.addPinChangeEventListener(this, (ev, context) { 
@@ -35,7 +35,7 @@ class _PinState extends State<Pin> {
     );
   }
 
-  updatePin(PinDisks pinDisks) {
+  updatePin(control.PinDisks pinDisks) {
     setState(() {
       this._pinDisks = pinDisks;
     });
@@ -106,11 +106,13 @@ List<Widget> _insertDisks(BuildContext context, pinDisks) {
     ),
   ];
 
+
   if (pinDisks != null) {
     var floor = availableHeight - 30;
     var disks = pinDisks.disks.reversed;
     disks.forEach((disk) {
-      result.add(_disk(floor, disk.size, availableWidth));
+      var left = _calculateMiddle(availableWidth, _calculateDiskWidth(availableWidth, disk.size));
+      result.add(_createDisk(floor, left, disk.size, availableWidth));
       floor = floor - 20.0;
     });
   }
@@ -118,11 +120,11 @@ List<Widget> _insertDisks(BuildContext context, pinDisks) {
   return result;
 }
 
-Widget _disk(double positionTop, int diskSize, double availableWidth) {
+Widget _createDisk(double positionTop, double positionLeft ,int diskSize, double availableWidth) {
 
   return Positioned(
     top: positionTop,
-    left: _calculateMiddle(availableWidth, _calculateDiskWidth(availableWidth, diskSize)),
+    left: positionLeft, //,
     child: SizedBox(
       width: _calculateDiskWidth(availableWidth, diskSize),
       height: 20,
@@ -138,3 +140,34 @@ Widget _disk(double positionTop, int diskSize, double availableWidth) {
 _calculateMiddle(totalWidth, diskWidth) => totalWidth / 2 - ( diskWidth / 2 );
 
 _calculateDiskWidth(double availableWidth, int diskSize) => availableWidth * reduceDiskFactor - 20 * ( 10 - diskSize );
+
+
+class Disk extends StatefulWidget {
+
+  final control.Disk _initialDisk;
+
+  Disk(this._initialDisk);
+
+  @override
+  _DiskState createState() => _DiskState(this._initialDisk);
+}
+
+class _DiskState extends State<Disk> {
+
+  control.Disk _disk;
+
+  _DiskState(this._disk);
+
+  @override
+  Widget build(BuildContext context) {
+    var availableWidth = MediaQuery.of(context).size.width;
+    return Stack (
+      children: <Widget>[
+        Scaffold(
+            body: Text('Grabbed Disk:')
+        ),
+        _createDisk(1, 100, _disk.size, availableWidth - 100)
+      ],
+    );
+  }
+}

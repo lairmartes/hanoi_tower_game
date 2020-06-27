@@ -32,11 +32,25 @@ void main() {
     PinEventController test = PinEventController(mockEventEmitter);
 
     Object context = Object();
-    EventCallback callback = (ev, context) { print("tnc"); };
+    EventCallback callback = (ev, context) { print("event received"); };
 
     test.addPinChangeEventListener(context, callback);
 
     verify(mockEventEmitter.on(any, context, callback));
+  });
+
+  test('When disk event listener is added then event is added to emitter for all events', () async {
+    DiskEventController test = DiskEventController(mockEventEmitter);
+
+    Object context = Object();
+
+    EventCallback callback = (ev, context) {
+      print("event received");
+    };
+    
+    test.addDiskChangedEventListener(context, callback);
+    
+    verify(mockEventEmitter.on(any, context, callback)).called(2);
   });
 }
 

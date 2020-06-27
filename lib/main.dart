@@ -21,5 +21,9 @@ main() async {
 
   Pins pins = Pins(widgetPin1, widgetPin2, widgetPin3);
 
+  Progress grab = await game.grabFromFirstPin();
+
+  ui_pin.Disk widgetDisk = ui_pin.Disk(grab.diskGrabbed);
+
   runApp(MaterialApp(home: pins));
 }
