@@ -80,15 +80,30 @@ List<Widget> _buildAllPins(ui_pin.Pin firstPin, BuildContext context, ui_pin.Pin
   return <Widget>[
     Flexible(
         flex: 2,
-        child:firstPin.createState().build(context)
+        child:InkWell(
+          onTap: () {
+            print("CLICOU NO PRIMEIRO PINO...");
+          },
+            child: firstPin.createState().build(context)
+        )
     ),
     Flexible(
         flex: 2,
-        child:secondPin.createState().build(context)
+        child:InkWell(
+          onTap: () {
+            print("CLICOU NO SEGUNDO PINO...");
+          },
+            child: secondPin.createState().build(context),
+        )
     ),
     Flexible(
         flex: 2,
-        child:thirdPin.createState().build(context)
+        child:InkWell(
+            onTap: () {
+              print("CLICOU NO TERCEIRO PINO...");
+            },
+            child: thirdPin.createState().build(context)
+        )
     ),
   ];
 }
