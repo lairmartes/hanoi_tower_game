@@ -56,4 +56,15 @@ void main() {
     await expectLater(find.byType(ui_game.Pin), matchesGoldenFile('pin_start_with_zero_disks.png'));
   });
 
+  testWidgets('Golden test passes when starts with smaller disk', (WidgetTester tester) async {
+    Game game = Game();
+
+    await game.start(1);
+
+    Progress grabDiskProgress = await game.grabFromFirstPin();
+
+    await tester.pumpWidget(MaterialApp(home: ui_game.Disk(grabDiskProgress.diskGrabbed)));
+
+    await expectLater(find.byType(ui_game.Disk), matchesGoldenFile('disk_start_with_smallest.png'));
+  });
 }
