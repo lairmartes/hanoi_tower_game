@@ -79,7 +79,7 @@ List<Widget> _insertDisks(BuildContext context, pinDisks) {
   var result =  <Widget>[
     Positioned(
         left: _calculateMiddle(availableWidth, 10),
-        bottom: 10,
+        bottom: 20,
         child: SizedBox(
           width: 10.0,
           height: availableHeight * reduceDiskFactor,
@@ -92,7 +92,8 @@ List<Widget> _insertDisks(BuildContext context, pinDisks) {
     ),
 
     Positioned(
-      top: availableHeight - 10,
+      //top: availableHeight - 20,
+      bottom: 20,
       left: _calculateMiddle(availableWidth, _calculateDiskWidth(availableWidth, 10)),
       child: SizedBox(
         width: availableWidth * reduceDiskFactor,
@@ -108,12 +109,12 @@ List<Widget> _insertDisks(BuildContext context, pinDisks) {
 
 
   if (pinDisks != null) {
-    var floor = availableHeight - 30;
+    var floor = 30.0;
     var disks = pinDisks.disks.reversed;
     disks.forEach((disk) {
       var left = _calculateMiddle(availableWidth, _calculateDiskWidth(availableWidth, disk.size));
       result.add(_createDisk(floor, left, disk.size, availableWidth));
-      floor = floor - 20.0;
+      floor = floor + 20.0;
     });
   }
 
@@ -123,7 +124,7 @@ List<Widget> _insertDisks(BuildContext context, pinDisks) {
 Widget _createDisk(double positionTop, double positionLeft ,int diskSize, double availableWidth) {
 
   return Positioned(
-    top: positionTop,
+    bottom: positionTop,
     left: positionLeft, //,
     child: SizedBox(
       width: _calculateDiskWidth(availableWidth, diskSize),
@@ -161,12 +162,13 @@ class _DiskState extends State<Disk> {
   @override
   Widget build(BuildContext context) {
     var availableWidth = MediaQuery.of(context).size.width;
+    var parts = MediaQuery.of(context).orientation == Orientation.landscape ? 3 : 1;
     return Stack (
       children: <Widget>[
         Scaffold(
             body: Text('Grabbed Disk:')
         ),
-        _createDisk(1, 100, _disk.size, availableWidth - 100)
+        _createDisk(1, 100, _disk.size, availableWidth/parts)
       ],
     );
   }
