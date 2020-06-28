@@ -42,7 +42,7 @@ class _PinState extends State<Pin> {
   }
 }
 
-final double reduceDiskFactor = 0.80;
+final double reduceDiskFactor = 0.70;
 
 final List<Color> _diskColors = List.unmodifiable([
     Colors.purpleAccent.shade100,
@@ -79,7 +79,7 @@ List<Widget> _insertDisks(BuildContext context, pinDisks) {
   var result =  <Widget>[
     Positioned(
         left: _calculateMiddle(availableWidth, 10),
-        bottom: 20,
+        bottom: 5,
         child: SizedBox(
           width: 10.0,
           height: availableHeight * reduceDiskFactor,
@@ -93,7 +93,7 @@ List<Widget> _insertDisks(BuildContext context, pinDisks) {
 
     Positioned(
       //top: availableHeight - 20,
-      bottom: 20,
+      bottom: 5,
       left: _calculateMiddle(availableWidth, _calculateDiskWidth(availableWidth, 10)),
       child: SizedBox(
         width: availableWidth * reduceDiskFactor,
@@ -109,7 +109,7 @@ List<Widget> _insertDisks(BuildContext context, pinDisks) {
 
 
   if (pinDisks != null) {
-    var floor = 30.0;
+    var floor = 15.0;
     var disks = pinDisks.disks.reversed;
     disks.forEach((disk) {
       var left = _calculateMiddle(availableWidth, _calculateDiskWidth(availableWidth, disk.size));
@@ -166,9 +166,9 @@ class _DiskState extends State<Disk> {
     return Stack (
       children: <Widget>[
         Scaffold(
-            body: Text('Grabbed Disk:')
+            //body: Text('Grabbed Disk:')
         ),
-        _createDisk(1, 100, _disk.size, availableWidth/parts)
+        _createDisk(10, 100, _disk.size, availableWidth/parts)
       ],
     );
   }

@@ -29,10 +29,11 @@ class _PinsState extends State<Pins> {
   @override
   Widget build(BuildContext context) {
     return Container(
+        padding: const EdgeInsets.all(15.0),
       child: Column(
         children: <Widget>[
           Flexible(
-            flex: 1,
+            flex: 2,
             child: uiDisk,
           ),
           Flexible(
