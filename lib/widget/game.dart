@@ -29,19 +29,24 @@ class _PinsState extends State<Pins> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: const EdgeInsets.all(15.0),
-      child: Column(
-        children: <Widget>[
-          Flexible(
-            flex: 2,
-            child: uiDisk,
-          ),
-          Flexible(
-            flex: 20,
-              child:_createPinsWithOrientation(context)
+      padding: const EdgeInsets.all(15.0),
+      child: Scaffold(
+
+          body: Column(
+            children: <Widget>[
+              Flexible(
+                flex: 2,
+                child: uiDisk,
+              ),
+              Flexible(
+                  flex: 20,
+                  child:_createPinsWithOrientation(context)
+              )
+            ],
           )
-        ],
-      )
+
+      ),
+
     );
   }
 

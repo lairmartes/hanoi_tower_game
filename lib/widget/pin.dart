@@ -42,7 +42,7 @@ class _PinState extends State<Pin> {
   }
 }
 
-final double reduceDiskFactor = 0.70;
+final double reduceDiskFactor = 0.75;
 
 final List<Color> _diskColors = List.unmodifiable([
     Colors.purpleAccent.shade100,
@@ -123,6 +123,8 @@ List<Widget> _insertDisks(BuildContext context, pinDisks) {
 
 Widget _createDisk(double positionTop, double positionLeft ,int diskSize, double availableWidth) {
 
+  if (diskSize < 1) return _createDiskZero(positionTop, positionLeft);
+
   return Positioned(
     bottom: positionTop,
     left: positionLeft, //,
@@ -134,6 +136,15 @@ Widget _createDisk(double positionTop, double positionLeft ,int diskSize, double
             color: _diskColors.elementAt(diskSize-1)
         ),
       ),
+    ),
+  );
+}
+
+Widget _createDiskZero(double positionTop, double positionLeft) {
+  return Positioned(
+    bottom: positionTop,
+    left: positionLeft, //,
+    child: SizedBox(
     ),
   );
 }
@@ -163,12 +174,13 @@ class _DiskState extends State<Disk> {
   Widget build(BuildContext context) {
     var availableWidth = MediaQuery.of(context).size.width;
     var parts = MediaQuery.of(context).orientation == Orientation.landscape ? 3 : 1;
+    var diskSize = _disk == null ? 0 : _disk.size;
+    print(diskSize);
     return Stack (
       children: <Widget>[
         Scaffold(
-            //body: Text('Grabbed Disk:')
         ),
-        _createDisk(10, 100, _disk.size, availableWidth/parts)
+        _createDisk(1, 20, diskSize, availableWidth/parts)
       ],
     );
   }

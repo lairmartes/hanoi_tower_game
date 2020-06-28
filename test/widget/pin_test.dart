@@ -67,4 +67,14 @@ void main() {
 
     await expectLater(find.byType(ui_game.Disk), matchesGoldenFile('disk_start_with_smallest.png'));
   });
+
+  testWidgets('Golden test passes when starts with null disk', (WidgetTester tester) async {
+    Game game = Game();
+
+    await game.start(1);
+
+    await tester.pumpWidget(MaterialApp(home: ui_game.Disk(null)));
+
+    await expectLater(find.byType(ui_game.Disk), matchesGoldenFile('disk_start_with_null_disk.png'));
+  });
 }
