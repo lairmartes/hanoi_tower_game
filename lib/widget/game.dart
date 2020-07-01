@@ -11,23 +11,44 @@ class GameController {
   final PinEventController _eventControllerPin3 = PinEventController(EventEmitter());
 
   final DiskEventController _diskEventController = DiskEventController(EventEmitter());
+  
+  bool isGrabbing = true;
 
   control.Game _game = control.Game();
 
   Future<Pins> getGamePins(int totalDisks) async {
     var progress = await _game.start(totalDisks);
 
-    var uiPin1 = ui_pin.Pin(progress.disksFirstPin(), _eventControllerPin1);
-    var uiPin2 = ui_pin.Pin(progress.disksSecondPin(), _eventControllerPin2);
-    var uiPin3 = ui_pin.Pin(progress.disksThirdPin(), _eventControllerPin3);
+    var uiPin1 = ui_pin.Pin(key: Key("a"), initialPinDisks: progress.disksFirstPin(), pinEventController: _eventControllerPin1);
+    var uiPin2 = ui_pin.Pin(key: Key("b"), initialPinDisks: progress.disksSecondPin(), pinEventController: _eventControllerPin2);
+    var uiPin3 = ui_pin.Pin(key: Key("c"), initialPinDisks: progress.disksThirdPin(), pinEventController: _eventControllerPin3);
 
     var uiDisk = ui_pin.Disk(progress.diskGrabbed, _diskEventController);
 
     return Pins(uiDisk, uiPin1, uiPin2, uiPin3, pinAction);
   }
+  
+  void _notifyUI(PinEventController pinEventController, 
+      DiskEventController diskEventController, 
+      control.PinDisks updatedPinDisk, 
+      control.Disk updatedDisk) {
+    pinEventController.firePinChangedEvent(updatedPinDisk);
+    if (updatedDisk != null) {
+      diskEventController.fireDiskGrabbed(updatedDisk);
+    } else {
+      diskEventController.fireDiskDropped();
+    }
+  }
+  
+  void _grabDisk(int pinPosition) async {
+    control.Progress progress = await _game.grabFromFirstPin();
+    _notifyUI(_eventControllerPin1, _diskEventController, progress.disksFirstPin(), progress.diskGrabbed);
+  }
 
   void pinAction(int pinPosition) {
-    print("Pin called was: $pinPosition");
+    if (isGrabbing) {
+      _grabDisk(pinPosition);
+    }
   }
 }
 
@@ -105,9 +126,7 @@ class _PinsState extends State<Pins> {
               )
             ],
           )
-
       ),
-
     );
   }
 

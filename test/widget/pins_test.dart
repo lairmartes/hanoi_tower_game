@@ -24,9 +24,9 @@ void main() {
     grabFromFirst = await game.grabFromFirstPin();
     Progress lastMove = await game.dropDiskInSecondPin(grabFromFirst.diskGrabbed);
 
-    ui_pin.Pin widgetPin1 = ui_pin.Pin(lastMove.disksFirstPin(), pinEventController);
-    ui_pin.Pin widgetPin2 = ui_pin.Pin(lastMove.disksSecondPin(), pinEventController);
-    ui_pin.Pin widgetPin3 = ui_pin.Pin(lastMove.disksThirdPin(), pinEventController);
+    ui_pin.Pin widgetPin1 = ui_pin.Pin(initialPinDisks: lastMove.disksFirstPin(), pinEventController: pinEventController);
+    ui_pin.Pin widgetPin2 = ui_pin.Pin(initialPinDisks: lastMove.disksSecondPin(), pinEventController: pinEventController);
+    ui_pin.Pin widgetPin3 = ui_pin.Pin(initialPinDisks: lastMove.disksThirdPin(), pinEventController: pinEventController);
 
     ui_pin.Disk widgetDisk = ui_pin.Disk(grabFromFirst.diskGrabbed, diskEventController);
 
