@@ -1,5 +1,55 @@
+import 'package:eventify/eventify.dart';
 import 'package:flutter/material.dart';
+import 'package:hanoi_tower_control/hanoi_tower_control.dart' as control;
+import 'package:hanoi_tower_game/events/events.dart';
 import 'package:hanoi_tower_game/widget/pin.dart' as ui_pin;
+
+
+class GameController {
+  final PinEventController _eventControllerPin1 = PinEventController(EventEmitter());
+  final PinEventController _eventControllerPin2 = PinEventController(EventEmitter());
+  final PinEventController _eventControllerPin3 = PinEventController(EventEmitter());
+
+  final DiskEventController _diskEventController = DiskEventController(EventEmitter());
+
+  control.Game _game = control.Game();
+
+  Future<Pins> getGamePins(int totalDisks) async {
+    var progress = await _game.start(totalDisks);
+
+    var uiPin1 = ui_pin.Pin(progress.disksFirstPin(), _eventControllerPin1);
+    var uiPin2 = ui_pin.Pin(progress.disksSecondPin(), _eventControllerPin2);
+    var uiPin3 = ui_pin.Pin(progress.disksThirdPin(), _eventControllerPin3);
+
+    var uiDisk = ui_pin.Disk(progress.diskGrabbed, _diskEventController);
+
+    return Pins(uiDisk, uiPin1, uiPin2, uiPin3);
+  }
+}
+
+
+
+class Game extends StatefulWidget {
+
+  final Pins _pins;
+
+  Game(this._pins);
+
+  @override
+  _GameState createState() => _GameState(_pins);
+}
+
+class _GameState extends State<Game> {
+
+  Pins _pins;
+
+  _GameState(this._pins);
+
+  @override
+  Widget build(BuildContext context) {
+    return _pins;
+  }
+}
 
 
 class Pins extends StatefulWidget {

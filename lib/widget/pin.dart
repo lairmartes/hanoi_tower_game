@@ -35,9 +35,9 @@ class _PinState extends State<Pin> {
     );
   }
 
-  updatePin(control.PinDisks pinDisks) {
+  updatePin(control.PinDisks newPinDisks) {
     setState(() {
-      this._pinDisks = pinDisks;
+      this._pinDisks = newPinDisks;
     });
   }
 }
@@ -157,18 +157,23 @@ _calculateDiskWidth(double availableWidth, int diskSize) => availableWidth * red
 class Disk extends StatefulWidget {
 
   final control.Disk _initialDisk;
+  final DiskEventController _diskEventController;
 
-  Disk(this._initialDisk);
+  Disk(this._initialDisk, this._diskEventController);
 
   @override
-  _DiskState createState() => _DiskState(this._initialDisk);
+  _DiskState createState() => _DiskState(this._initialDisk, this._diskEventController);
 }
 
 class _DiskState extends State<Disk> {
 
   control.Disk _disk;
 
-  _DiskState(this._disk);
+  _DiskState(this._disk, DiskEventController diskEventController) {
+    diskEventController.addDiskChangedEventListener(this, (ev, context) {
+      update(ev.eventData);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -183,5 +188,11 @@ class _DiskState extends State<Disk> {
         _createDisk(1, 20, diskSize, availableWidth/parts)
       ],
     );
+  }
+
+  update(control.Disk newDisk) {
+    setState(() {
+      this._disk = newDisk;
+    });
   }
 }
