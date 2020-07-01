@@ -30,7 +30,7 @@ void main() {
 
     ui_pin.Disk widgetDisk = ui_pin.Disk(grabFromFirst.diskGrabbed, diskEventController);
 
-    await tester.pumpWidget(MaterialApp(home: ui_game.Pins(widgetDisk, widgetPin1, widgetPin2, widgetPin3)));
+    await tester.pumpWidget(MaterialApp(home: ui_game.Pins(widgetDisk, widgetPin1, widgetPin2, widgetPin3, () {})));
 
     await expectLater(find.byType(ui_game.Pins), matchesGoldenFile('pins_one_disk_in_each_pin.png'));
   });
