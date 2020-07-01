@@ -9,10 +9,12 @@ import 'package:hanoi_tower_game/widget/pin.dart' as ui_pin;
 void main() {
   Game game;
   PinEventController pinEventController;
+  DiskEventController diskEventController;
 
   setUp(() {
     game = Game();
     pinEventController = PinEventController(new EventEmitter());
+    diskEventController = DiskEventController(new EventEmitter());
   });
 
   testWidgets('When starts with one disk in each pin then shows one disk in each pin', (WidgetTester tester) async {
@@ -26,7 +28,7 @@ void main() {
     ui_pin.Pin widgetPin2 = ui_pin.Pin(lastMove.disksSecondPin(), pinEventController);
     ui_pin.Pin widgetPin3 = ui_pin.Pin(lastMove.disksThirdPin(), pinEventController);
 
-    ui_pin.Disk widgetDisk = ui_pin.Disk(grabFromFirst.diskGrabbed);
+    ui_pin.Disk widgetDisk = ui_pin.Disk(grabFromFirst.diskGrabbed, diskEventController);
 
     await tester.pumpWidget(MaterialApp(home: ui_game.Pins(widgetDisk, widgetPin1, widgetPin2, widgetPin3)));
 

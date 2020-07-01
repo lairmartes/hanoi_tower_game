@@ -63,7 +63,7 @@ void main() {
 
     Progress grabDiskProgress = await game.grabFromFirstPin();
 
-    await tester.pumpWidget(MaterialApp(home: ui_game.Disk(grabDiskProgress.diskGrabbed)));
+    await tester.pumpWidget(MaterialApp(home: ui_game.Disk(grabDiskProgress.diskGrabbed, DiskEventController(mockEventEmitter))));
 
     await expectLater(find.byType(ui_game.Disk), matchesGoldenFile('disk_start_with_smallest.png'));
   });
@@ -73,7 +73,7 @@ void main() {
 
     await game.start(1);
 
-    await tester.pumpWidget(MaterialApp(home: ui_game.Disk(null)));
+    await tester.pumpWidget(MaterialApp(home: ui_game.Disk(null, DiskEventController(mockEventEmitter))));
 
     await expectLater(find.byType(ui_game.Disk), matchesGoldenFile('disk_start_with_null_disk.png'));
   });
