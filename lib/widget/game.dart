@@ -23,7 +23,11 @@ class GameController {
 
     var uiDisk = ui_pin.Disk(progress.diskGrabbed, _diskEventController);
 
-    return Pins(uiDisk, uiPin1, uiPin2, uiPin3);
+    return Pins(uiDisk, uiPin1, uiPin2, uiPin3, pinAction);
+  }
+
+  void pinAction(int pinPosition) {
+    print("Pin called was: $pinPosition");
   }
 }
 
@@ -60,10 +64,15 @@ class Pins extends StatefulWidget {
   final ui_pin.Pin _uiSecondPin;
   final ui_pin.Pin _uiThirdPin;
 
-  Pins(this._uiDisk, this._uiFistPin, this._uiSecondPin, this._uiThirdPin);
+  final Function _pinActionCallBack;
+
+
+  Pins(this._uiDisk, this._uiFistPin, this._uiSecondPin, this._uiThirdPin,
+      this._pinActionCallBack);
 
   @override
-  _PinsState createState() => _PinsState(this._uiDisk, this._uiFistPin, this._uiSecondPin, this._uiThirdPin);
+  _PinsState createState() => _PinsState(this._uiDisk, this._uiFistPin,
+      this._uiSecondPin, this._uiThirdPin, this._pinActionCallBack);
 }
 
 class _PinsState extends State<Pins> {
@@ -74,7 +83,9 @@ class _PinsState extends State<Pins> {
   ui_pin.Pin uiSecondPin;
   ui_pin.Pin uiThirdPin;
 
-  _PinsState(this.uiDisk, this.uiFistPin, this.uiSecondPin, this.uiThirdPin);
+  final Function _pinActionCallBack;
+
+  _PinsState(this.uiDisk, this.uiFistPin, this.uiSecondPin, this.uiThirdPin, this._pinActionCallBack);
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +101,7 @@ class _PinsState extends State<Pins> {
               ),
               Flexible(
                   flex: 20,
-                  child:_createPinsWithOrientation(context)
+                  child:_createPinsWithOrientation(context, this._pinActionCallBack)
               )
             ],
           )
@@ -100,39 +111,42 @@ class _PinsState extends State<Pins> {
     );
   }
 
-  Flex _createPinsWithOrientation(BuildContext context) {
+  Flex _createPinsWithOrientation(BuildContext context, Function pinActionCallBack) {
     return MediaQuery.of(context).orientation == Orientation.landscape ?
-              _buildPinRows(context, uiFistPin, uiSecondPin, uiThirdPin):
-              _buildPinColumns(context, uiFistPin, uiSecondPin, uiThirdPin);
+              _buildPinRows(context, pinActionCallBack,  uiFistPin, uiSecondPin, uiThirdPin):
+              _buildPinColumns(context, pinActionCallBack, uiFistPin, uiSecondPin, uiThirdPin);
   }
 }
 
 Column _buildPinColumns(BuildContext context,
+    Function pinActionCallBack,
     ui_pin.Pin firstPin,
     ui_pin.Pin secondPin,
     ui_pin.Pin thirdPin) {
   return Column(
-    children: _buildAllPins(firstPin, context, secondPin, thirdPin),
+    children: _buildAllPins(context, pinActionCallBack, firstPin, secondPin, thirdPin),
   );
 }
 
 
 Row _buildPinRows(BuildContext context,
+    Function pinActionCallBack,
     ui_pin.Pin firstPin,
     ui_pin.Pin secondPin,
     ui_pin.Pin thirdPin) {
   return Row(
-    children: _buildAllPins(firstPin, context, secondPin, thirdPin),
+    children: _buildAllPins(context, pinActionCallBack, firstPin, secondPin, thirdPin),
   );
 }
 
-List<Widget> _buildAllPins(ui_pin.Pin firstPin, BuildContext context, ui_pin.Pin secondPin, ui_pin.Pin thirdPin) {
+List<Widget> _buildAllPins(BuildContext context, Function pinActionCallBack,
+    ui_pin.Pin firstPin, ui_pin.Pin secondPin, ui_pin.Pin thirdPin) {
   return <Widget>[
     Flexible(
         flex: 2,
         child:InkWell(
           onTap: () {
-            print("CLICOU NO PRIMEIRO PINO...");
+            pinActionCallBack(1);
           },
             child: firstPin.createState().build(context)
         )
@@ -141,7 +155,7 @@ List<Widget> _buildAllPins(ui_pin.Pin firstPin, BuildContext context, ui_pin.Pin
         flex: 2,
         child:InkWell(
           onTap: () {
-            print("CLICOU NO SEGUNDO PINO...");
+            pinActionCallBack(2);
           },
             child: secondPin.createState().build(context),
         )
@@ -150,7 +164,7 @@ List<Widget> _buildAllPins(ui_pin.Pin firstPin, BuildContext context, ui_pin.Pin
         flex: 2,
         child:InkWell(
             onTap: () {
-              print("CLICOU NO TERCEIRO PINO...");
+              pinActionCallBack(3);
             },
             child: thirdPin.createState().build(context)
         )
