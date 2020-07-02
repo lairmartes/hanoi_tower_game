@@ -48,65 +48,78 @@ class GameController {
     control.Progress progress;
     control.PinDisks pinDisks;
 
-    switch (pinPosition) {
-      case 1 : {
-        pinController = _eventControllerPin1;
-        progress = await _game.grabFromFirstPin();
-        pinDisks = progress.disksFirstPin();
-        break;
+    try {
+      switch (pinPosition) {
+        case 1 :
+          {
+            pinController = _eventControllerPin1;
+            progress = await _game.grabFromFirstPin();
+            pinDisks = progress.disksFirstPin();
+            break;
+          }
+        case 2 :
+          {
+            pinController = _eventControllerPin2;
+            progress = await _game.grabFromSecondPin();
+            pinDisks = progress.disksSecondPin();
+            break;
+          }
+        case 3 :
+          {
+            pinController = _eventControllerPin3;
+            progress = await _game.grabFromThirdPin();
+            pinDisks = progress.disksThirdPin();
+            break;
+          }
       }
-      case 2 : {
-        pinController = _eventControllerPin2;
-        progress = await _game.grabFromSecondPin();
-        pinDisks = progress.disksSecondPin();
-        break;
-      }
-      case 3 : {
-        pinController = _eventControllerPin3;
-        progress = await _game.grabFromThirdPin();
-        pinDisks = progress.disksThirdPin();
-        break;
-      }
+      _currentDisk = progress.diskGrabbed;
+      _notifyUI(pinController, _diskEventController, pinDisks, _currentDisk);
+      _isGrabbing = false;
+    } on ArgumentError catch(e) {
+      print('Error detected: ${e.message}');
     }
-    _currentDisk = progress.diskGrabbed;
-    _notifyUI(pinController, _diskEventController, pinDisks, _currentDisk);
   }
 
   void _dropDisk(int pinPosition) async {
     PinEventController pinController;
     control.PinDisks pinDisks;
-    switch (pinPosition) {
-      case 1 : {
-        pinController = _eventControllerPin1;
-        var progress = await _game.dropDiskInFirstPin(_currentDisk);
-        pinDisks = progress.disksFirstPin();
-        break;
+    try {
+      switch (pinPosition) {
+        case 1 :
+          {
+            pinController = _eventControllerPin1;
+            var progress = await _game.dropDiskInFirstPin(_currentDisk);
+            pinDisks = progress.disksFirstPin();
+            break;
+          }
+        case 2 :
+          {
+            pinController = _eventControllerPin2;
+            var progress = await _game.dropDiskInSecondPin(_currentDisk);
+            pinDisks = progress.disksSecondPin();
+            break;
+          }
+        case 3 :
+          {
+            pinController = _eventControllerPin3;
+            var progress = await _game.dropDiskInThirdPin(_currentDisk);
+            pinDisks = progress.disksThirdPin();
+            break;
+          }
       }
-      case 2 : {
-        pinController = _eventControllerPin2;
-        var progress = await _game.dropDiskInSecondPin(_currentDisk);
-        pinDisks = progress.disksSecondPin();
-        break;
-      }
-      case 3 : {
-        pinController = _eventControllerPin3;
-        var progress = await _game.dropDiskInThirdPin(_currentDisk);
-        pinDisks = progress.disksThirdPin();
-        break;
-      }
-
+        _currentDisk = null;
+        _notifyUI(pinController, _diskEventController, pinDisks, _currentDisk);
+        _isGrabbing = true;
+    } on ArgumentError catch (e) {
+      print('Error detected: ${e.message}');
     }
-    _currentDisk = null;
-    _notifyUI(pinController, _diskEventController, pinDisks, _currentDisk);
   }
 
   void pinAction(int pinPosition) {
     if (_isGrabbing) {
       _grabDisk(pinPosition);
-      _isGrabbing = false;
     } else {
       _dropDisk(pinPosition);
-      _isGrabbing = true;
     }
   }
 }
