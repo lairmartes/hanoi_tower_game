@@ -9,7 +9,6 @@ class Pin extends StatefulWidget {
 
   const Pin({Key key, this.initialPinDisks, this.pinEventController}) : super(key: key);
 
-
   @override
   _PinState createState() => _PinState(this.initialPinDisks, this.pinEventController);
 }
@@ -17,9 +16,15 @@ class Pin extends StatefulWidget {
 class _PinState extends State<Pin> with AutomaticKeepAliveClientMixin {
 
   control.PinDisks _pinDisks;
+  PinEventController _pinEventController;
 
-  _PinState(this._pinDisks, PinEventController pinEvent) {
-    pinEvent.addPinChangeEventListener(this, (ev, context) { 
+  _PinState(this._pinDisks, this._pinEventController);
+
+  @override
+  void initState() {
+    super.initState();
+    print("TAH NA DISNEY FILHO DA PUTA????");
+    this._pinEventController.addPinChangeEventListener(this, (ev, context) {
       _update(ev.eventData);
     });
   }
@@ -169,9 +174,14 @@ class Disk extends StatefulWidget {
 class _DiskState extends State<Disk> {
 
   control.Disk _disk;
+  DiskEventController _diskEventController;
 
-  _DiskState(this._disk, DiskEventController diskEventController) {
-    diskEventController.addDiskChangedEventListener(this, (ev, context) {
+  _DiskState(this._disk, this._diskEventController);
+
+  @override
+  void initState() {
+    super.initState();
+    this._diskEventController.addDiskChangedEventListener(this, (ev, context) {
       _update(ev.eventData);
     });
   }

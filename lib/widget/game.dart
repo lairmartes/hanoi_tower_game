@@ -12,16 +12,16 @@ class GameController {
 
   final DiskEventController _diskEventController = DiskEventController(EventEmitter());
   
-  bool isGrabbing = true;
+  bool _isGrabbing = true;
 
   control.Game _game = control.Game();
 
   Future<Pins> getGamePins(int totalDisks) async {
     var progress = await _game.start(totalDisks);
 
-    var uiPin1 = ui_pin.Pin(key: Key("a"), initialPinDisks: progress.disksFirstPin(), pinEventController: _eventControllerPin1);
-    var uiPin2 = ui_pin.Pin(key: Key("b"), initialPinDisks: progress.disksSecondPin(), pinEventController: _eventControllerPin2);
-    var uiPin3 = ui_pin.Pin(key: Key("c"), initialPinDisks: progress.disksThirdPin(), pinEventController: _eventControllerPin3);
+    var uiPin1 = ui_pin.Pin(key: UniqueKey(), initialPinDisks: progress.disksFirstPin(), pinEventController: _eventControllerPin1);
+    var uiPin2 = ui_pin.Pin(key: UniqueKey(), initialPinDisks: progress.disksSecondPin(), pinEventController: _eventControllerPin2);
+    var uiPin3 = ui_pin.Pin(key: UniqueKey(), initialPinDisks: progress.disksThirdPin(), pinEventController: _eventControllerPin3);
 
     var uiDisk = ui_pin.Disk(progress.diskGrabbed, _diskEventController);
 
@@ -46,8 +46,9 @@ class GameController {
   }
 
   void pinAction(int pinPosition) {
-    if (isGrabbing) {
+    if (_isGrabbing) {
       _grabDisk(pinPosition);
+      _isGrabbing = false;
     }
   }
 }
@@ -135,58 +136,61 @@ class _PinsState extends State<Pins> {
               _buildPinRows(context, pinActionCallBack,  uiFistPin, uiSecondPin, uiThirdPin):
               _buildPinColumns(context, pinActionCallBack, uiFistPin, uiSecondPin, uiThirdPin);
   }
-}
 
-Column _buildPinColumns(BuildContext context,
-    Function pinActionCallBack,
-    ui_pin.Pin firstPin,
-    ui_pin.Pin secondPin,
-    ui_pin.Pin thirdPin) {
-  return Column(
-    children: _buildAllPins(context, pinActionCallBack, firstPin, secondPin, thirdPin),
-  );
-}
+  Column _buildPinColumns(BuildContext context,
+      Function pinActionCallBack,
+      ui_pin.Pin firstPin,
+      ui_pin.Pin secondPin,
+      ui_pin.Pin thirdPin) {
+    return Column(
+      children: _buildAllPins(context, pinActionCallBack, firstPin, secondPin, thirdPin),
+    );
+  }
 
 
-Row _buildPinRows(BuildContext context,
-    Function pinActionCallBack,
-    ui_pin.Pin firstPin,
-    ui_pin.Pin secondPin,
-    ui_pin.Pin thirdPin) {
-  return Row(
-    children: _buildAllPins(context, pinActionCallBack, firstPin, secondPin, thirdPin),
-  );
-}
+  Row _buildPinRows(BuildContext context,
+      Function pinActionCallBack,
+      ui_pin.Pin firstPin,
+      ui_pin.Pin secondPin,
+      ui_pin.Pin thirdPin) {
+    return Row(
+      children: _buildAllPins(context, pinActionCallBack, firstPin, secondPin, thirdPin),
+    );
+  }
 
-List<Widget> _buildAllPins(BuildContext context, Function pinActionCallBack,
-    ui_pin.Pin firstPin, ui_pin.Pin secondPin, ui_pin.Pin thirdPin) {
-  return <Widget>[
-    Flexible(
-        flex: 2,
-        child:InkWell(
-          onTap: () {
-            pinActionCallBack(1);
-          },
-            child: firstPin.createState().build(context)
-        )
-    ),
-    Flexible(
-        flex: 2,
-        child:InkWell(
-          onTap: () {
-            pinActionCallBack(2);
-          },
-            child: secondPin.createState().build(context),
-        )
-    ),
-    Flexible(
-        flex: 2,
-        child:InkWell(
+  List<Widget> _buildAllPins(BuildContext context, Function pinActionCallBack,
+      ui_pin.Pin firstPin, ui_pin.Pin secondPin, ui_pin.Pin thirdPin) {
+    return <Widget>[
+      Flexible(
+        key: UniqueKey(),
+          flex: 2,
+          child:InkWell(
+              onTap: () {
+                pinActionCallBack(1);
+              },
+              child: firstPin.createState().build(context)
+          )
+      ),
+      Flexible(
+        key: UniqueKey(),
+          flex: 2,
+          child:InkWell(
             onTap: () {
-              pinActionCallBack(3);
+              pinActionCallBack(2);
             },
-            child: thirdPin.createState().build(context)
-        )
-    ),
-  ];
+            child: secondPin.createState().build(context),
+          )
+      ),
+      Flexible(
+        key: UniqueKey(),
+          flex: 2,
+          child:InkWell(
+              onTap: () {
+                pinActionCallBack(3);
+              },
+              child: thirdPin.createState().build(context)
+          )
+      ),
+    ];
+  }
 }
