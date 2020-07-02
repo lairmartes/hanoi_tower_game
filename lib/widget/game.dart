@@ -99,27 +99,27 @@ class Pins extends StatefulWidget {
 
 class _PinsState extends State<Pins> {
 
-  ui_pin.Disk uiDisk;
+  ui_pin.Disk _uiDisk;
 
-  ui_pin.Pin uiFistPin;
-  ui_pin.Pin uiSecondPin;
-  ui_pin.Pin uiThirdPin;
+  ui_pin.Pin _uiFistPin;
+  ui_pin.Pin _uiSecondPin;
+  ui_pin.Pin _uiThirdPin;
 
   final Function _pinActionCallBack;
 
-  _PinsState(this.uiDisk, this.uiFistPin, this.uiSecondPin, this.uiThirdPin, this._pinActionCallBack);
+  _PinsState(this._uiDisk, this._uiFistPin, this._uiSecondPin, this._uiThirdPin,
+      this._pinActionCallBack);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(15.0),
       child: Scaffold(
-
           body: Column(
             children: <Widget>[
               Flexible(
                 flex: 2,
-                child: uiDisk,
+                child: _uiDisk,
               ),
               Flexible(
                   flex: 20,
@@ -133,62 +133,50 @@ class _PinsState extends State<Pins> {
 
   Flex _createPinsWithOrientation(BuildContext context, Function pinActionCallBack) {
     return MediaQuery.of(context).orientation == Orientation.landscape ?
-              _buildPinRows(context, pinActionCallBack,  uiFistPin, uiSecondPin, uiThirdPin):
-              _buildPinColumns(context, pinActionCallBack, uiFistPin, uiSecondPin, uiThirdPin);
+              _buildPinRows(context):
+              _buildPinColumns(context);
   }
 
-  Column _buildPinColumns(BuildContext context,
-      Function pinActionCallBack,
-      ui_pin.Pin firstPin,
-      ui_pin.Pin secondPin,
-      ui_pin.Pin thirdPin) {
+  Column _buildPinColumns(BuildContext context) {
     return Column(
-      children: _buildAllPins(context, pinActionCallBack, firstPin, secondPin, thirdPin),
+      children: _buildAllPins(context),
     );
   }
 
 
-  Row _buildPinRows(BuildContext context,
-      Function pinActionCallBack,
-      ui_pin.Pin firstPin,
-      ui_pin.Pin secondPin,
-      ui_pin.Pin thirdPin) {
+  Row _buildPinRows(BuildContext context) {
     return Row(
-      children: _buildAllPins(context, pinActionCallBack, firstPin, secondPin, thirdPin),
+      children: _buildAllPins(context),
     );
   }
 
-  List<Widget> _buildAllPins(BuildContext context, Function pinActionCallBack,
-      ui_pin.Pin firstPin, ui_pin.Pin secondPin, ui_pin.Pin thirdPin) {
+  List<Widget> _buildAllPins(BuildContext context) {
     return <Widget>[
       Flexible(
-        key: UniqueKey(),
           flex: 2,
           child:InkWell(
               onTap: () {
-                pinActionCallBack(1);
+                _pinActionCallBack(1);
               },
-              child: firstPin.createState().build(context)
+              child: _uiFistPin
           )
       ),
       Flexible(
-        key: UniqueKey(),
           flex: 2,
           child:InkWell(
             onTap: () {
-              pinActionCallBack(2);
+              _pinActionCallBack(2);
             },
-            child: secondPin.createState().build(context),
+            child: _uiSecondPin,
           )
       ),
       Flexible(
-        key: UniqueKey(),
           flex: 2,
           child:InkWell(
               onTap: () {
-                pinActionCallBack(3);
+                _pinActionCallBack(3);
               },
-              child: thirdPin.createState().build(context)
+              child: _uiThirdPin
           )
       ),
     ];
