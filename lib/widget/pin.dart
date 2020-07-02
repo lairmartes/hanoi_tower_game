@@ -23,7 +23,6 @@ class _PinState extends State<Pin> with AutomaticKeepAliveClientMixin {
   @override
   void initState() {
     super.initState();
-    print("TAH NA DISNEY FILHO DA PUTA????");
     this._pinEventController.addPinChangeEventListener(this, (ev, context) {
       _update(ev.eventData);
     });
@@ -97,7 +96,6 @@ class _PinState extends State<Pin> with AutomaticKeepAliveClientMixin {
   }
 
   _update(control.PinDisks newPinDisks) {
-    print("TAH MONTADO FILHO DA PUTA??? " + this.mounted.toString());
      setState(() {
       this._pinDisks = newPinDisks;
     });
