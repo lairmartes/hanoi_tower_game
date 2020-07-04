@@ -39,3 +39,19 @@ class DiskEventController {
     _emitter.on(diskDroppedEvent, context, callback);
   }
 }
+
+class GameEventController {
+  final EventEmitter _emitter;
+
+  static const invalidMoveDetected = 'invalidMoveDetected';
+
+  GameEventController(this._emitter);
+
+  void fireInvalidMoveDetected(final String message) {
+    _emitter.emit(invalidMoveDetected, this, message);
+  }
+
+  void addGameEventListener(Object context, EventCallback callback) {
+    _emitter.on(invalidMoveDetected, context, callback);
+  }
+}
