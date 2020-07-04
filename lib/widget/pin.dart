@@ -1,46 +1,111 @@
 import 'package:flutter/material.dart';
-import 'package:hanoi_tower_control/hanoi_tower_control.dart';
+import 'package:hanoi_tower_control/hanoi_tower_control.dart' as control;
 import 'package:hanoi_tower_game/events/events.dart';
 
 class Pin extends StatefulWidget {
 
-  final PinDisks _initialPinDisks;
-  final PinEvent _pinEventController;
+  final control.PinDisks initialPinDisks;
+  final PinEventController pinEventController;
 
-  Pin(this._initialPinDisks, this._pinEventController);
+  const Pin({Key key, this.initialPinDisks, this.pinEventController}) : super(key: key);
 
   @override
-  _PinState createState() => _PinState(this._initialPinDisks, this._pinEventController);
+  _PinState createState() => _PinState(this.initialPinDisks, this.pinEventController);
 }
 
-class _PinState extends State<Pin> {
+class _PinState extends State<Pin> with AutomaticKeepAliveClientMixin {
 
-  PinDisks _pinDisks;
+  control.PinDisks _pinDisks;
+  PinEventController _pinEventController;
 
-  _PinState(this._pinDisks, PinEvent pinEvent) {
-    pinEvent.addPinChangeEventListener(this, (ev, context) { 
-      updatePin(ev.eventData);
+  _PinState(this._pinDisks, this._pinEventController);
+
+  @override
+  void initState() {
+    super.initState();
+    this._pinEventController.addPinChangeEventListener(this, (ev, context) {
+      _update(ev.eventData);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Builder(
-        builder: (BuildContext context) =>
-            Container(
-              child: _buildPin(context, this._pinDisks)
-            ),
-        ),
+    super.build(context);
+    return _buildPin(context, _pinDisks);
+  }
+
+  Stack _buildPin(BuildContext context, pinDisks) {
+    return Stack(
+      children: _insertDisks(context, pinDisks),
     );
   }
 
-  updatePin(PinDisks pinDisks) {
-    setState(() {
-      this._pinDisks = pinDisks;
+  List<Widget> _insertDisks(BuildContext context, pinDisks) {
+    var availableHeight = MediaQuery.of(context).size.height;
+    if (MediaQuery.of(context).orientation == Orientation.portrait) {
+      availableHeight = availableHeight / 3;
+    }
+
+    var availableWidth = MediaQuery.of(context).size.width;
+    if (MediaQuery.of(context).orientation == Orientation.landscape) {
+      availableWidth = availableWidth / 3;
+    }
+    var result =  <Widget>[
+      Positioned(
+          left: _calculateMiddle(availableWidth, 10),
+          bottom: 5,
+          child: SizedBox(
+            width: 10.0,
+            height: availableHeight * reduceDiskFactor,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                  color: _pinColor
+              ),
+            ),
+          )
+      ),
+
+      Positioned(
+        //top: availableHeight - 20,
+        bottom: 5,
+        left: _calculateMiddle(availableWidth, _calculateDiskWidth(availableWidth, 10)),
+        child: SizedBox(
+          width: availableWidth * reduceDiskFactor,
+          height: 10.0,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+                color: _pinColor
+            ),
+          ),
+        ),
+      ),
+    ];
+
+
+    if (pinDisks != null) {
+      var floor = 15.0;
+      var disks = pinDisks.disks.reversed;
+      disks.forEach((disk) {
+        var left = _calculateMiddle(availableWidth, _calculateDiskWidth(availableWidth, disk.size));
+        result.add(_createDisk(floor, left, disk.size, availableWidth));
+        floor = floor + 20.0;
+      });
+    }
+
+    return result;
+  }
+
+  _update(control.PinDisks newPinDisks) {
+     setState(() {
+      this._pinDisks = newPinDisks;
     });
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
+
+final double reduceDiskFactor = 0.75;
 
 final List<Color> _diskColors = List.unmodifiable([
     Colors.purpleAccent.shade100,
@@ -58,69 +123,17 @@ final List<Color> _diskColors = List.unmodifiable([
 
 final Color _pinColor = Colors.grey.shade700;
 
-Column _buildPin(BuildContext context, pinDisks) {
-  return Column(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: <Widget>[
-      Stack(
-        children: _insertDisks(context, pinDisks),
-      ),
-    ],
-  );
-}
 
-List<Widget> _insertDisks(BuildContext context, pinDisks) {
-  var result =  <Widget>[
-    Align(
-        alignment: Alignment.center,
-        child: SizedBox(
-          width: 10.0,
-          height: 225.0,
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-                color: _pinColor
-            ),
-          ),
-        )
-    ),
 
-    Positioned(
-      top: 215,
-      left: _calculateMiddle(MediaQuery.of(context).size.width, 250),
-      child: SizedBox(
-        width: 250.0,
-        height: 10.0,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-              color: _pinColor
-          ),
-        ),
-      ),
-    ),
-  ];
+Widget _createDisk(double positionTop, double positionLeft ,int diskSize, double availableWidth) {
 
-  if (pinDisks != null) {
-    var floor = 190.0;
-    var disks = pinDisks.disks.reversed;
-    disks.forEach((element) {
-      result.add(_disk(floor, element.size, context));
-      floor = floor - 20.0;
-    });
-  }
+  if (diskSize < 1) return _createDiskZero(positionTop, positionLeft);
 
-  return result;
-}
-
-_calculateMiddle(totalWidth, diskWidth) => totalWidth / 2 - ( diskWidth / 2 );
-
-_calculateDiskWidth(int diskSize) => 250.0 - 20 * ( 10 - diskSize );
-
-Widget _disk(double positionTop, int diskSize, BuildContext context) {
   return Positioned(
-    top: positionTop,
-    left: _calculateMiddle(MediaQuery.of(context).size.width, _calculateDiskWidth(diskSize)),
+    bottom: positionTop,
+    left: positionLeft, //,
     child: SizedBox(
-      width: _calculateDiskWidth(diskSize),
+      width: _calculateDiskWidth(availableWidth, diskSize),
       height: 20,
       child: DecoratedBox(
         decoration: BoxDecoration(
@@ -129,4 +142,66 @@ Widget _disk(double positionTop, int diskSize, BuildContext context) {
       ),
     ),
   );
+}
+
+Widget _createDiskZero(double positionTop, double positionLeft) {
+  return Positioned(
+    bottom: positionTop,
+    left: positionLeft, //,
+    child: SizedBox(
+    ),
+  );
+}
+
+_calculateMiddle(totalWidth, diskWidth) => totalWidth / 2 - ( diskWidth / 2 );
+
+_calculateDiskWidth(double availableWidth, int diskSize) => availableWidth * reduceDiskFactor - 20 * ( 10 - diskSize );
+
+
+class Disk extends StatefulWidget {
+
+  final control.Disk _initialDisk;
+  final DiskEventController _diskEventController;
+
+  Disk(this._initialDisk, this._diskEventController);
+
+  @override
+  _DiskState createState() => _DiskState(this._initialDisk, this._diskEventController);
+}
+
+class _DiskState extends State<Disk> {
+
+  control.Disk _disk;
+  DiskEventController _diskEventController;
+
+  _DiskState(this._disk, this._diskEventController);
+
+  @override
+  void initState() {
+    super.initState();
+    this._diskEventController.addDiskChangedEventListener(this, (ev, context) {
+      _update(ev.eventData);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var availableWidth = MediaQuery.of(context).size.width;
+    var parts = MediaQuery.of(context).orientation == Orientation.landscape ? 3 : 1;
+    var diskSize = _disk == null ? 0 : _disk.size;
+
+    return Stack (
+      children: <Widget>[
+        Scaffold(
+        ),
+        _createDisk(1, 20, diskSize, availableWidth/parts)
+      ],
+    );
+  }
+
+  _update(control.Disk newDisk) {
+    setState(() {
+      this._disk = newDisk;
+    });
+  }
 }

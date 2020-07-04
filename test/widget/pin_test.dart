@@ -9,20 +9,20 @@ import '../events/events_test.dart';
 
 void main() {
   Game game;
-  PinEvent pinEvent;
+  PinEventController pinEvent;
   EventEmitter mockEventEmitter;
 
   setUp(() {
     game = Game();
     mockEventEmitter = MockEventEmitter();
-    pinEvent = PinEvent(mockEventEmitter);
+    pinEvent = PinEventController(mockEventEmitter);
   });
 
   testWidgets('Golden test passes when starts game with 4 disks', (WidgetTester tester) async {
 
     Progress progress = await game.start(4);
 
-    await tester.pumpWidget(MaterialApp(home: ui_game.Pin(progress.disksFirstPin(), pinEvent)));
+    await tester.pumpWidget(MaterialApp(home: ui_game.Pin(initialPinDisks: progress.disksFirstPin(), pinEventController: pinEvent)));
 
     await expectLater(find.byType(ui_game.Pin), matchesGoldenFile('pin_start_with_4_disks.png'));
   });
@@ -31,7 +31,7 @@ void main() {
 
     Progress progress = await game.start(1);
 
-    await tester.pumpWidget(MaterialApp(home: ui_game.Pin(progress.disksFirstPin(), pinEvent)));
+    await tester.pumpWidget(MaterialApp(home: ui_game.Pin(initialPinDisks: progress.disksFirstPin(), pinEventController: pinEvent)));
 
     await expectLater(find.byType(ui_game.Pin), matchesGoldenFile('pin_start_with_min_disks.png'));
   });
@@ -41,7 +41,7 @@ void main() {
 
     Progress progress = await game.start(10);
 
-    await tester.pumpWidget(MaterialApp(home: ui_game.Pin(progress.disksFirstPin(), pinEvent)));
+    await tester.pumpWidget(MaterialApp(home: ui_game.Pin(initialPinDisks: progress.disksFirstPin(), pinEventController: pinEvent)));
 
     await expectLater(find.byType(ui_game.Pin), matchesGoldenFile('pin_start_with_max_disks.png'));
   });
@@ -51,8 +51,30 @@ void main() {
 
     Progress progress = await game.start(1);
 
-    await tester.pumpWidget(MaterialApp(home: ui_game.Pin(progress.disksSecondPin(), pinEvent)));
+    await tester.pumpWidget(MaterialApp(home: ui_game.Pin(initialPinDisks: progress.disksSecondPin(), pinEventController: pinEvent)));
 
     await expectLater(find.byType(ui_game.Pin), matchesGoldenFile('pin_start_with_zero_disks.png'));
+  });
+
+  testWidgets('Golden test passes when starts with smaller disk', (WidgetTester tester) async {
+    Game game = Game();
+
+    await game.start(1);
+
+    Progress grabDiskProgress = await game.grabFromFirstPin();
+
+    await tester.pumpWidget(MaterialApp(home: ui_game.Disk(grabDiskProgress.diskGrabbed, DiskEventController(mockEventEmitter))));
+
+    await expectLater(find.byType(ui_game.Disk), matchesGoldenFile('disk_start_with_smallest.png'));
+  });
+
+  testWidgets('Golden test passes when starts with null disk', (WidgetTester tester) async {
+    Game game = Game();
+
+    await game.start(1);
+
+    await tester.pumpWidget(MaterialApp(home: ui_game.Disk(null, DiskEventController(mockEventEmitter))));
+
+    await expectLater(find.byType(ui_game.Disk), matchesGoldenFile('disk_start_with_null_disk.png'));
   });
 }
