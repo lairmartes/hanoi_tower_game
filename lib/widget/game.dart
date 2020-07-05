@@ -207,6 +207,8 @@ class _GameState extends State<Game> {
                       .firePinChangedEvent(moveDisk.disksFirstPin());
                 } on ArgumentError catch(e) {
                   _talkToPlayer(e.message);
+                } on StateError catch(e) {
+                  _talkToPlayer(e.message);
                 }
               },
               child: _uiFirstPin
@@ -222,6 +224,8 @@ class _GameState extends State<Game> {
                 _gameController.eventControllerPin2
                     .firePinChangedEvent(moveDisk.disksSecondPin());
               } on ArgumentError catch(e) {
+                _talkToPlayer(e.message);
+              } on StateError catch(e) {
                 _talkToPlayer(e.message);
               }
              },
@@ -241,6 +245,8 @@ class _GameState extends State<Game> {
                     _showGameOver(context, moveDisk);
                   }
                 } on ArgumentError catch(e) {
+                  _talkToPlayer(e.message);
+                } on StateError catch(e) {
                   _talkToPlayer(e.message);
                 }
               },
