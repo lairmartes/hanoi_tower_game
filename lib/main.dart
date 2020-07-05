@@ -5,7 +5,7 @@ main() async {
 
   ui_game.GameController gameController = ui_game.GameController();
 
-  ui_game.Game uiGame = ui_game.Game(await gameController.getGamePins(10));
+  ui_game.Game uiGame = await gameController.createGame(10);
 
   runApp(MaterialApp(home: uiGame));
 }

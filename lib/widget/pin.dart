@@ -4,16 +4,16 @@ import 'package:hanoi_tower_game/events/events.dart';
 
 class Pin extends StatefulWidget {
 
-  final control.PinDisks initialPinDisks;
-  final PinEventController pinEventController;
+  final control.PinDisks _initialPinDisks;
+  final PinEventController _pinEventController;
 
-  const Pin({Key key, this.initialPinDisks, this.pinEventController}) : super(key: key);
+  Pin(this._initialPinDisks, this._pinEventController);
 
   @override
-  _PinState createState() => _PinState(this.initialPinDisks, this.pinEventController);
+  _PinState createState() => _PinState(this._initialPinDisks, this._pinEventController);
 }
 
-class _PinState extends State<Pin> {
+class _PinState extends State<Pin> with AutomaticKeepAliveClientMixin {
 
   control.PinDisks _pinDisks;
   PinEventController _pinEventController;
@@ -31,6 +31,7 @@ class _PinState extends State<Pin> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return _buildPin(context, _pinDisks);
   }
 

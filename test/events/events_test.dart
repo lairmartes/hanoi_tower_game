@@ -1,26 +1,25 @@
 import 'package:eventify/eventify.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hanoi_tower_control/hanoi_tower_control.dart';
+import 'package:hanoi_tower_control/hanoi_tower_control.dart' as control;
 import 'package:hanoi_tower_game/events/events.dart';
 import 'package:mockito/mockito.dart';
 
 void main() {
   
   EventEmitter mockEventEmitter;
-  Game game;
+  control.Game game;
 
   setUp(() {
     mockEventEmitter = MockEventEmitter();
-    game = Game();
-
+    game = control.Game();
   });
   
   test('When pin event is published then call emitter', () async {
     PinEventController test = PinEventController(mockEventEmitter);
 
-    Progress startGame = await game.start(5);
+    control.Progress startGame = await game.start(5);
 
-    PinDisks pinEvent = startGame.disksFirstPin();
+    control.PinDisks pinEvent = startGame.disksFirstPin();
 
     test.firePinChangedEvent(pinEvent);
 
@@ -43,9 +42,9 @@ void main() {
 
     await game.start(5);
 
-    Progress diskGrabbedProgress = await game.grabFromFirstPin();
+    control.Progress diskGrabbedProgress = await game.grabFromFirstPin();
 
-    Disk diskGrabbed = diskGrabbedProgress.diskGrabbed;
+    control.Disk diskGrabbed = diskGrabbedProgress.diskGrabbed;
 
     test.fireDiskGrabbed(diskGrabbed);
 
@@ -75,7 +74,7 @@ void main() {
     verify(mockEventEmitter.on(DiskEventController.diskGrabbedEvent, context, callback));
   });
 
-  test('When listener is added to game events, then it is included in the emitter', () {
+  test('When listener is added to game events, then they are included for all events.', () {
     GameEventController test = GameEventController(mockEventEmitter);
 
     Object context = Object();
@@ -86,7 +85,8 @@ void main() {
 
     test.addGameEventListener(context, callback);
 
-    verify(mockEventEmitter.on(GameEventController.invalidMoveDetected, context,callback));
+    verify(mockEventEmitter.on(GameEventController.invalidMoveDetected, context, callback));
+    verify(mockEventEmitter.on(GameEventController.gameProgressed, context, callback));
   });
 
   test('When invalid move event is launched, then emitter notifies listeners', () {
@@ -103,7 +103,7 @@ void main() {
   test('When some move is done and progress is generated, then notifies listeners', () async {
     GameEventController test = GameEventController(mockEventEmitter);
 
-    Progress startGame = await game.start(5);
+    control.Progress startGame = await game.start(5);
 
     test.fireGameProgressed(startGame);
 

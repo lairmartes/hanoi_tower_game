@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:eventify/eventify.dart';
 import 'package:flutter/material.dart';
 import 'package:hanoi_tower_control/hanoi_tower_control.dart' as control;
@@ -13,22 +11,27 @@ class GameController {
   final PinEventController _eventControllerPin3 = PinEventController(EventEmitter());
 
   final DiskEventController _diskEventController = DiskEventController(EventEmitter());
-  
+
+  final GameEventController _gameEventController = GameEventController(EventEmitter());
+
+  final control.Game _game = control.Game();
+
+  GameModel _gameModel;
+
   bool _isGrabbing = true;
   control.Disk _currentDisk;
 
-  control.Game _game = control.Game();
+  Future<Game> createGame(int totalDisks) async {
 
-  Future<Pins> getGamePins(int totalDisks) async {
-    var progress = await _game.start(totalDisks);
+     _gameModel = GameModel(_eventControllerPin1,
+        _eventControllerPin2, _eventControllerPin3,
+        _diskEventController, pinAction);
 
-    var uiPin1 = ui_pin.Pin(key: UniqueKey(), initialPinDisks: progress.disksFirstPin(), pinEventController: _eventControllerPin1);
-    var uiPin2 = ui_pin.Pin(key: UniqueKey(), initialPinDisks: progress.disksSecondPin(), pinEventController: _eventControllerPin2);
-    var uiPin3 = ui_pin.Pin(key: UniqueKey(), initialPinDisks: progress.disksThirdPin(), pinEventController: _eventControllerPin3);
+     control.Progress startGame = await _game.start(totalDisks);
 
-    var uiDisk = ui_pin.Disk(progress.diskGrabbed, _diskEventController);
+     Game result = Game(_gameModel, startGame, _gameEventController);
 
-    return Pins(uiDisk, uiPin1, uiPin2, uiPin3, pinAction);
+     return result;
   }
   
   void _notifyUI(PinEventController pinEventController, 
@@ -74,6 +77,8 @@ class GameController {
       }
       _currentDisk = progress.diskGrabbed;
       _notifyUI(pinController, _diskEventController, pinDisks, _currentDisk);
+      print('atualiza filho da puta!!!!');
+      _gameEventController.fireGameProgressed(progress);
       _isGrabbing = false;
     } on ArgumentError catch(e) {
       print('Error detected: ${e.message}');
@@ -82,33 +87,35 @@ class GameController {
 
   void _dropDisk(int pinPosition) async {
     PinEventController pinController;
+    control.Progress progress;
     control.PinDisks pinDisks;
     try {
       switch (pinPosition) {
         case 1 :
           {
             pinController = _eventControllerPin1;
-            var progress = await _game.dropDiskInFirstPin(_currentDisk);
+            progress = await _game.dropDiskInFirstPin(_currentDisk);
             pinDisks = progress.disksFirstPin();
             break;
           }
         case 2 :
           {
             pinController = _eventControllerPin2;
-            var progress = await _game.dropDiskInSecondPin(_currentDisk);
+            progress = await _game.dropDiskInSecondPin(_currentDisk);
             pinDisks = progress.disksSecondPin();
             break;
           }
         case 3 :
           {
             pinController = _eventControllerPin3;
-            var progress = await _game.dropDiskInThirdPin(_currentDisk);
+            progress = await _game.dropDiskInThirdPin(_currentDisk);
             pinDisks = progress.disksThirdPin();
             break;
           }
       }
         _currentDisk = null;
         _notifyUI(pinController, _diskEventController, pinDisks, _currentDisk);
+        _gameEventController.fireGameProgressed(progress);
         _isGrabbing = true;
     } on ArgumentError catch (e) {
       print('Error detected: ${e.message}');
@@ -124,64 +131,67 @@ class GameController {
   }
 }
 
+class GameModel {
+  final PinEventController pin1EventController;
+  final PinEventController pin2EventController;
+  final PinEventController pin3EventController;
+
+  final DiskEventController diskEventController;
+
+  final Function pinActionCallBack;
+
+  GameModel(this.pin1EventController, this.pin2EventController,
+      this.pin3EventController, this.diskEventController,
+      this.pinActionCallBack);
+}
+
 class Game extends StatefulWidget {
 
-  final Pins _pins;
+  final GameModel _gameModel;
+  final control.Progress _initialProgress;
+  final GameEventController _gameEventController;
 
-  Game(this._pins);
+  Game(this._gameModel, this._initialProgress, this._gameEventController);
 
   @override
-  _GameState createState() => _GameState(_pins);
+  _GameState createState() => _GameState(this._gameModel,
+      this._gameEventController,
+      this._initialProgress);
 }
 
 class _GameState extends State<Game> {
 
-  Pins _pins;
+  final GameModel _gameModel;
 
-  _GameState(this._pins);
+  final GameEventController _gameEventController;
 
-  @override
-  Widget build(BuildContext context) {
-    return _pins;
-  }
-}
-
-
-class Pins extends StatefulWidget {
-
-  final ui_pin.Disk _uiDisk;
-
-  final ui_pin.Pin _uiFistPin;
-  final ui_pin.Pin _uiSecondPin;
-  final ui_pin.Pin _uiThirdPin;
-
-  final Function _pinActionCallBack;
-
-
-  Pins(this._uiDisk, this._uiFistPin, this._uiSecondPin, this._uiThirdPin,
-      this._pinActionCallBack);
-
-  @override
-  _PinsState createState() => _PinsState(this._uiDisk, this._uiFistPin,
-      this._uiSecondPin, this._uiThirdPin, this._pinActionCallBack);
-}
-
-class _PinsState extends State<Pins> {
+  control.Progress _currentProgress;
 
   ui_pin.Disk _uiDisk;
-
-  ui_pin.Pin _uiFistPin;
+  ui_pin.Pin _uiFirstPin;
   ui_pin.Pin _uiSecondPin;
   ui_pin.Pin _uiThirdPin;
 
-  final Function _pinActionCallBack;
+  Function _pinActionCallBack;
 
-  _PinsState(this._uiDisk, this._uiFistPin, this._uiSecondPin, this._uiThirdPin,
-      this._pinActionCallBack);
+  _GameState(this._gameModel, this._gameEventController, this._currentProgress);
 
   @override
   void initState() {
     super.initState();
+
+    print("Have you already passed here?");
+
+    _uiDisk = ui_pin.Disk(_currentProgress.diskGrabbed, _gameModel.diskEventController);
+    _uiFirstPin = ui_pin.Pin(_currentProgress.disksFirstPin(), _gameModel.pin1EventController);
+    _uiSecondPin = ui_pin.Pin(_currentProgress.disksSecondPin(), _gameModel.pin2EventController);
+    _uiThirdPin = ui_pin.Pin(_currentProgress.disksThirdPin(), _gameModel.pin3EventController);
+    _pinActionCallBack = _gameModel.pinActionCallBack;
+
+    _gameEventController.addGameEventListener(this, (ev, context) {
+      print('adicionaou o ouvinte filho da puta???');
+      _update(ev.eventData);
+    });
   }
 
   @override
@@ -232,7 +242,7 @@ class _PinsState extends State<Pins> {
               onTap: () {
                 _pinActionCallBack(1);
               },
-              child: _uiFistPin
+              child: _uiFirstPin
           )
       ),
       Flexible(
@@ -254,5 +264,16 @@ class _PinsState extends State<Pins> {
           )
       ),
     ];
+  }
+
+  void _update(control.Progress progress) {
+    setState(() {
+      _currentProgress = progress;
+      print("Progresso atualizado no estado... ${_currentProgress.disksFirstPin().disks.length}");
+      _uiDisk = ui_pin.Disk(_currentProgress.diskGrabbed, _gameModel.diskEventController);
+      _uiFirstPin = ui_pin.Pin(_currentProgress.disksFirstPin(), _gameModel.pin1EventController);
+      _uiSecondPin = ui_pin.Pin(_currentProgress.disksSecondPin(), _gameModel.pin2EventController);
+      _uiThirdPin = ui_pin.Pin(_currentProgress.disksThirdPin(), _gameModel.pin3EventController);
+    });
   }
 }

@@ -58,5 +58,6 @@ class GameEventController {
 
   void addGameEventListener(Object context, EventCallback callback) {
     _emitter.on(invalidMoveDetected, context, callback);
+    _emitter.on(gameProgressed, context, callback);
   }
 }
