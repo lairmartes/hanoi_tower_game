@@ -30,6 +30,13 @@ class _PinState extends State<Pin> with AutomaticKeepAliveClientMixin {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    this._pinEventController = null;
+    this._pinDisks = null;
+  }
+
+  @override
   Widget build(BuildContext context) {
     super.build(context);
     return _buildPin(context, _pinDisks);
@@ -97,9 +104,11 @@ class _PinState extends State<Pin> with AutomaticKeepAliveClientMixin {
   }
 
   _update(control.PinDisks newPinDisks) {
-     setState(() {
-      this._pinDisks = newPinDisks;
-    });
+    if (this.mounted) {
+      setState(() {
+        this._pinDisks = newPinDisks;
+      });
+    }
   }
 
   @override

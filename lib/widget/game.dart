@@ -133,37 +133,36 @@ class _GameState extends State<Game> {
   }
 
   void _moveDisk(int pinPosition) async {
-    control.Progress moveDisk = await _gameController.moveDisk(pinPosition);
-    _updateVisualElementsState(moveDisk);
+    try {
+      control.Progress moveDisk = await _gameController.moveDisk(pinPosition);
 
-    _gameController.updateLastProgress(moveDisk);
+      _updateVisualElementsState(moveDisk);
 
-    moveDisk.diskGrabbed == null ?
-        _gameController.eventControllerDisk.fireDiskDropped() :
-        _gameController.eventControllerDisk.fireDiskGrabbed(moveDisk.diskGrabbed);
+      _gameController.updateLastProgress(moveDisk);
 
-    switch (pinPosition) {
-      case 1:
-        _gameController.eventControllerPin1.firePinChangedEvent(moveDisk.disksFirstPin());
-        break;
-      case 2:
-        _gameController.eventControllerPin2.firePinChangedEvent(moveDisk.disksSecondPin());
-        break;
-      case 3:
-        _gameController.eventControllerPin3.firePinChangedEvent(moveDisk.disksThirdPin());
-        break;
+      moveDisk.diskGrabbed == null ?
+          _gameController.eventControllerDisk.fireDiskDropped() :
+          _gameController.eventControllerDisk.fireDiskGrabbed(moveDisk.diskGrabbed);
+
+      switch (pinPosition) {
+        case 1:
+          _gameController.eventControllerPin1.firePinChangedEvent(moveDisk.disksFirstPin());
+          break;
+        case 2:
+          _gameController.eventControllerPin2.firePinChangedEvent(moveDisk.disksSecondPin());
+          break;
+        case 3:
+          _gameController.eventControllerPin3.firePinChangedEvent(moveDisk.disksThirdPin());
+          break;
+      }
+    } on ArgumentError catch(e) {
+      print("ta amarrado!!! ${e.message}");
+      throw e;
     }
-
   }
 
   _updateVisualElementsState(control.Progress progress) {
     _update(progress);
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    print("VAI T0OMAR NO COTABA!!!");
   }
 
   @override
@@ -175,7 +174,7 @@ class _GameState extends State<Game> {
             children: <Widget>[
               Flexible(
                 flex: 2,
-                child: _uiDisk == null ? Text('Waiting...') : _uiDisk,
+                child: _uiDisk == null ? Text("Waiting...") : _uiDisk
               ),
               Flexible(
                   flex: 20,
