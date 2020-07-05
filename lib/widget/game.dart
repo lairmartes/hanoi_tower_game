@@ -105,6 +105,8 @@ class Game extends StatefulWidget {
 
 class _GameState extends State<Game> {
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
   final GameController _gameController = GameController();
   final int _totalDisks;
 
@@ -153,6 +155,7 @@ class _GameState extends State<Game> {
     return Container(
       padding: const EdgeInsets.all(15.0),
       child: Scaffold(
+          key: _scaffoldKey,
           body: Column(
             children: <Widget>[
               Flexible(
@@ -200,7 +203,7 @@ class _GameState extends State<Game> {
                   _gameController.eventControllerPin1
                       .firePinChangedEvent(moveDisk.disksFirstPin());
                 } on ArgumentError catch(e) {
-                  print('Error detected: ${e.message}');
+                  _talkToPlayer(e.message);
                 }
               },
               child: _uiFirstPin
@@ -216,7 +219,7 @@ class _GameState extends State<Game> {
                 _gameController.eventControllerPin2
                     .firePinChangedEvent(moveDisk.disksSecondPin());
               } on ArgumentError catch(e) {
-                print('Error detected: ${e.message}');
+                _talkToPlayer(e.message);
               }
              },
             child: _uiSecondPin,
@@ -232,13 +235,22 @@ class _GameState extends State<Game> {
                   _gameController.eventControllerPin3
                       .firePinChangedEvent(moveDisk.disksThirdPin());
                 } on ArgumentError catch(e) {
-                  print('Error detected: ${e.message}');
+                  _talkToPlayer(e.message);
                 }
               },
               child: _uiThirdPin
           )
       ),
     ];
+  }
+
+  void _talkToPlayer(String message) {
+    _scaffoldKey.currentState.showSnackBar(
+        new SnackBar(
+            content:Text(message, textAlign: TextAlign.center),
+          duration: Duration(milliseconds: 500),
+        )
+    );
   }
 
   void _update(control.Progress progress) {
