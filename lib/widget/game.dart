@@ -234,6 +234,9 @@ class _GameState extends State<Game> {
                   _updateDiskMoved(moveDisk);
                   _gameController.eventControllerPin3
                       .firePinChangedEvent(moveDisk.disksThirdPin());
+                  if (moveDisk.isGameOver) {
+                    _showGameOver(context, moveDisk);
+                  }
                 } on ArgumentError catch(e) {
                   _talkToPlayer(e.message);
                 }
@@ -250,6 +253,36 @@ class _GameState extends State<Game> {
             content:Text(message, textAlign: TextAlign.center),
           duration: Duration(milliseconds: 500),
         )
+    );
+  }
+
+  Future<void> _showGameOver(BuildContext context, control.Progress gameOver) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Kudos! Game is over!!!'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('All disks where moved to third pin!'),
+                Text('You did it in ${gameOver.moves} moves.'),
+                Text('Your score is ${gameOver.score()}.')
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Close'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _startGame(this._totalDisks);
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 
