@@ -156,6 +156,9 @@ class _GameState extends State<Game> {
       padding: const EdgeInsets.all(15.0),
       child: Scaffold(
           key: _scaffoldKey,
+          appBar: AppBar(
+            title: Text("Hanoi Tower Game")
+          ),
           body: Column(
             children: <Widget>[
               Flexible(
@@ -268,13 +271,17 @@ class _GameState extends State<Game> {
               children: <Widget>[
                 Text('All disks where moved to third pin!'),
                 Text('You did it in ${gameOver.moves} moves.'),
-                Text('Your score is ${gameOver.score()}.')
+                Text('Your score is ${(gameOver.score() * 100).toInt()} out of 100.'),
+                Visibility(
+                  visible: gameOver.score() == 1,
+                  child: Text('You played a perfect game!'),
+                )
               ],
             ),
           ),
           actions: <Widget>[
             FlatButton(
-              child: Text('Close'),
+              child: Text('Play again'),
               onPressed: () {
                 Navigator.of(context).pop();
                 _startGame(this._totalDisks);
