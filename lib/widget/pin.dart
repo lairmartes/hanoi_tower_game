@@ -13,7 +13,7 @@ class Pin extends StatefulWidget {
   _PinState createState() => _PinState(this.initialPinDisks, this.pinEventController);
 }
 
-class _PinState extends State<Pin> with AutomaticKeepAliveClientMixin {
+class _PinState extends State<Pin> {
 
   control.PinDisks _pinDisks;
   PinEventController _pinEventController;
@@ -23,6 +23,7 @@ class _PinState extends State<Pin> with AutomaticKeepAliveClientMixin {
   @override
   void initState() {
     super.initState();
+    print("disks ${_pinDisks.disks.length}");
     this._pinEventController.addPinChangeEventListener(this, (ev, context) {
       _update(ev.eventData);
     });
@@ -30,7 +31,6 @@ class _PinState extends State<Pin> with AutomaticKeepAliveClientMixin {
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     return _buildPin(context, _pinDisks);
   }
 

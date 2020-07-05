@@ -44,11 +44,16 @@ class GameEventController {
   final EventEmitter _emitter;
 
   static const invalidMoveDetected = 'invalidMoveDetected';
+  static const gameProgressed = 'gameProgressed';
 
   GameEventController(this._emitter);
 
   void fireInvalidMoveDetected(final String message) {
     _emitter.emit(invalidMoveDetected, this, message);
+  }
+
+  void fireGameProgressed(final Progress progress) {
+    _emitter.emit(gameProgressed, this, progress);
   }
 
   void addGameEventListener(Object context, EventCallback callback) {

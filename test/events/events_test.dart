@@ -99,6 +99,16 @@ void main() {
     verify(mockEventEmitter.emit(GameEventController.invalidMoveDetected, test,
         invalidMoveMessageTest));
   });
+
+  test('When some move is done and progress is generated, then notifies listeners', () async {
+    GameEventController test = GameEventController(mockEventEmitter);
+
+    Progress startGame = await game.start(5);
+
+    test.fireGameProgressed(startGame);
+
+    verify(mockEventEmitter.emit(GameEventController.gameProgressed, test, startGame));
+  });
 }
 
 

@@ -124,8 +124,6 @@ class GameController {
   }
 }
 
-
-
 class Game extends StatefulWidget {
 
   final Pins _pins;
@@ -180,6 +178,11 @@ class _PinsState extends State<Pins> {
 
   _PinsState(this._uiDisk, this._uiFistPin, this._uiSecondPin, this._uiThirdPin,
       this._pinActionCallBack);
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
