@@ -132,33 +132,16 @@ class _GameState extends State<Game> {
     _updateVisualElementsState(startGame);
   }
 
-  void _moveDisk(int pinPosition) async {
-    try {
-      control.Progress moveDisk = await _gameController.moveDisk(pinPosition);
+  void _updateDiskMoved(control.Progress moveDisk) async {
 
-      _updateVisualElementsState(moveDisk);
+    _updateVisualElementsState(moveDisk);
 
-      _gameController.updateLastProgress(moveDisk);
+    _gameController.updateLastProgress(moveDisk);
 
-      moveDisk.diskGrabbed == null ?
-          _gameController.eventControllerDisk.fireDiskDropped() :
-          _gameController.eventControllerDisk.fireDiskGrabbed(moveDisk.diskGrabbed);
-
-      switch (pinPosition) {
-        case 1:
-          _gameController.eventControllerPin1.firePinChangedEvent(moveDisk.disksFirstPin());
-          break;
-        case 2:
-          _gameController.eventControllerPin2.firePinChangedEvent(moveDisk.disksSecondPin());
-          break;
-        case 3:
-          _gameController.eventControllerPin3.firePinChangedEvent(moveDisk.disksThirdPin());
-          break;
-      }
-    } on ArgumentError catch(e) {
-      print("ta amarrado!!! ${e.message}");
-      throw e;
-    }
+    moveDisk.diskGrabbed == null
+        ? _gameController.eventControllerDisk.fireDiskDropped()
+        : _gameController.eventControllerDisk
+            .fireDiskGrabbed(moveDisk.diskGrabbed);
   }
 
   _updateVisualElementsState(control.Progress progress) {
@@ -210,9 +193,12 @@ class _GameState extends State<Game> {
       Flexible(
           flex: 2,
           child:InkWell(
-              onTap: () {
+              onTap: () async {
                 try {
-                  _moveDisk(1);
+                  control.Progress moveDisk = await _gameController.moveDisk(1);
+                  _updateDiskMoved(moveDisk);
+                  _gameController.eventControllerPin1
+                      .firePinChangedEvent(moveDisk.disksFirstPin());
                 } on ArgumentError catch(e) {
                   print('Error detected: ${e.message}');
                 }
@@ -223,22 +209,28 @@ class _GameState extends State<Game> {
       Flexible(
           flex: 2,
           child:InkWell(
-            onTap: () {
-              try {
-                _moveDisk(2);
+            onTap: () async {
+              try  {
+                control.Progress moveDisk = await _gameController.moveDisk(2);
+                _updateDiskMoved(moveDisk);
+                _gameController.eventControllerPin2
+                    .firePinChangedEvent(moveDisk.disksSecondPin());
               } on ArgumentError catch(e) {
                 print('Error detected: ${e.message}');
               }
-            },
+             },
             child: _uiSecondPin,
           )
       ),
       Flexible(
           flex: 2,
           child:InkWell(
-              onTap: () {
+              onTap: () async {
                 try {
-                  _moveDisk(3);
+                  control.Progress moveDisk = await _gameController.moveDisk(3);
+                  _updateDiskMoved(moveDisk);
+                  _gameController.eventControllerPin3
+                      .firePinChangedEvent(moveDisk.disksThirdPin());
                 } on ArgumentError catch(e) {
                   print('Error detected: ${e.message}');
                 }
