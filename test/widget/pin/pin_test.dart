@@ -5,7 +5,7 @@ import 'package:hanoi_tower_control/hanoi_tower_control.dart' as control;
 import 'package:hanoi_tower_game/events/events.dart';
 import 'package:hanoi_tower_game/widget/pin.dart' as ui_game;
 
-import '../events/events_test.dart';
+import '../../events/events_test.dart';
 
 void main() {
   control.Game game;
