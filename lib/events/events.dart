@@ -1,5 +1,4 @@
 import 'package:eventify/eventify.dart';
-import 'package:flutter/material.dart';
 import 'package:hanoi_tower_control/hanoi_tower_control.dart';
 
 class PinEventController {
@@ -37,27 +36,5 @@ class DiskEventController {
   void addDiskChangedEventListener(Object context, EventCallback callback) {
     _emitter.on(diskGrabbedEvent, context, callback);
     _emitter.on(diskDroppedEvent, context, callback);
-  }
-}
-
-class GameEventController {
-  final EventEmitter _emitter;
-
-  static const invalidMoveDetected = 'invalidMoveDetected';
-  static const gameProgressed = 'gameProgressed';
-
-  GameEventController(this._emitter);
-
-  void fireInvalidMoveDetected(final String message) {
-    _emitter.emit(invalidMoveDetected, this, message);
-  }
-
-  void fireGameProgressed(final Progress progress) {
-    _emitter.emit(gameProgressed, this, progress);
-  }
-
-  void addGameEventListener(Object context, EventCallback callback) {
-    _emitter.on(invalidMoveDetected, context, callback);
-    _emitter.on(gameProgressed, context, callback);
   }
 }

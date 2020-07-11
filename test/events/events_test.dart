@@ -73,42 +73,6 @@ void main() {
     verify(mockEventEmitter.on(DiskEventController.diskDroppedEvent, context, callback));
     verify(mockEventEmitter.on(DiskEventController.diskGrabbedEvent, context, callback));
   });
-
-  test('When listener is added to game events, then they are included for all events.', () {
-    GameEventController test = GameEventController(mockEventEmitter);
-
-    Object context = Object();
-
-    EventCallback callback = (ev, context) {
-      print("event received");
-    };
-
-    test.addGameEventListener(context, callback);
-
-    verify(mockEventEmitter.on(GameEventController.invalidMoveDetected, context, callback));
-    verify(mockEventEmitter.on(GameEventController.gameProgressed, context, callback));
-  });
-
-  test('When invalid move event is launched, then emitter notifies listeners', () {
-    GameEventController test = GameEventController(mockEventEmitter);
-
-    var invalidMoveMessageTest = "Invalid Move message test";
-
-    test.fireInvalidMoveDetected(invalidMoveMessageTest);
-
-    verify(mockEventEmitter.emit(GameEventController.invalidMoveDetected, test,
-        invalidMoveMessageTest));
-  });
-
-  test('When some move is done and progress is generated, then notifies listeners', () async {
-    GameEventController test = GameEventController(mockEventEmitter);
-
-    control.Progress startGame = await game.start(5);
-
-    test.fireGameProgressed(startGame);
-
-    verify(mockEventEmitter.emit(GameEventController.gameProgressed, test, startGame));
-  });
 }
 
 

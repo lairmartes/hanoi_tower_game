@@ -17,7 +17,11 @@ class GameController {
 
   Future<control.Progress> startGame(int totalDisks) {
 
-    return _game.start(totalDisks);
+    Future<control.Progress> result = _game.start(totalDisks);
+
+    _updateLastProgress(result);
+
+    return result;
   }
 
   Future<control.Progress> _grabDisk(int pinPosition) async {
@@ -41,6 +45,9 @@ class GameController {
           break;
         }
     }
+
+    _updateLastProgress(result);
+
     return result;
   }
 
@@ -64,6 +71,9 @@ class GameController {
           break;
         }
     }
+
+    _updateLastProgress(result);
+
     return result;
   }
 
@@ -75,8 +85,8 @@ class GameController {
     }
   }
 
-  void updateLastProgress(control.Progress progress) {
-    _lastProgress = progress;
+  Future<void> _updateLastProgress(Future<control.Progress> currentProgress) async {
+    _lastProgress = await currentProgress;
   }
 
   PinEventController get eventControllerPin1 => _eventControllerPin1;
@@ -130,15 +140,12 @@ class _GameState extends State<Game> {
 
   void _startGame(int totalDisks) async {
     control.Progress startGame = await _gameController.startGame(totalDisks);
-    _gameController.updateLastProgress(startGame);
     _updateVisualElementsState(startGame);
   }
 
   void _updateDiskMoved(control.Progress moveDisk) async {
 
     _updateVisualElementsState(moveDisk);
-
-    _gameController.updateLastProgress(moveDisk);
 
     moveDisk.diskGrabbed == null
         ? _gameController.eventControllerDisk.fireDiskDropped()
