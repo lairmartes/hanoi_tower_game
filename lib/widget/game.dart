@@ -134,18 +134,18 @@ class _GameState extends State<Game> {
     if (!_gameController.isGameStarted) {
       _startGame(this._totalDisks);
     } else {
-      _updateVisualElementsState(_gameController.lastProgress);
+      _update(_gameController.lastProgress);
     }
   }
 
   void _startGame(int totalDisks) async {
     control.Progress startGame = await _gameController.startGame(totalDisks);
-    _updateVisualElementsState(startGame);
+    _update(startGame);
   }
 
   void _updateDiskMoved(control.Progress moveDisk) async {
 
-    _updateVisualElementsState(moveDisk);
+    _update(moveDisk);
 
     moveDisk.diskGrabbed == null
         ? _gameController.eventControllerDisk.fireDiskDropped()
@@ -153,9 +153,6 @@ class _GameState extends State<Game> {
             .fireDiskGrabbed(moveDisk.diskGrabbed);
   }
 
-  _updateVisualElementsState(control.Progress progress) {
-    _update(progress);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -267,7 +264,7 @@ class _GameState extends State<Game> {
     _scaffoldKey.currentState.showSnackBar(
         new SnackBar(
             content:Text(message, textAlign: TextAlign.center),
-          duration: Duration(milliseconds: 500),
+          duration: Duration(milliseconds: 750),
         )
     );
   }
