@@ -6,6 +6,7 @@ import 'package:hanoi_tower_control/hanoi_tower_control.dart' as control;
 import 'package:hanoi_tower_game/events/events.dart';
 import 'package:hanoi_tower_game/widget/pin.dart' as ui_pin;
 import 'package:hanoi_tower_game/widget/setup.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class GameController {
@@ -108,12 +109,10 @@ class GameController {
 
 class Game extends StatefulWidget {
 
-  final int initialDiskQuantity;
-
-  const Game({Key key, this.initialDiskQuantity}) : super(key: key);
+  const Game({Key key}) : super(key: key);
 
   @override
-  _GameState createState() => _GameState(this.initialDiskQuantity);
+  _GameState createState() => _GameState();
 }
 
 class _GameState extends State<Game> {
@@ -128,14 +127,12 @@ class _GameState extends State<Game> {
   ui_pin.Pin _uiSecondPin;
   ui_pin.Pin _uiThirdPin;
 
-  _GameState(this._totalDisks);
-
   @override
   void initState() {
     super.initState();
 
     if (!_gameController.isGameStarted) {
-      _startGame(this._totalDisks);
+      _getFromPreferencesTotalDisks().then((totalDisks) { _startGame(totalDisks); });
     } else {
       _update(_gameController.lastProgress);
     }
@@ -167,10 +164,11 @@ class _GameState extends State<Game> {
       child: Scaffold(
           key: _scaffoldKey,
           appBar: AppBar(
-            title: Text("Finish up in ${_totalMoves(_totalDisks)} moves")
+            title: Text(_totalDisks == null ? "Loading..." : "Finish up in ${_totalMoves(_totalDisks)} moves")
           ),
           drawer: Setup(totalDisks: _totalDisks,
             onAction: (totalDisks) {
+            _saveInPreferencesTotalDisks(totalDisks);
             _startGame(totalDisks);
           },),
           body: Column(
@@ -323,4 +321,16 @@ class _GameState extends State<Game> {
   }
 
   int _totalMoves(disks) => pow(2, disks) - 1;
+
+  void _saveInPreferencesTotalDisks(int totalDisks) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setInt('totalDisks', totalDisks);
+  }
+
+  Future<int> _getFromPreferencesTotalDisks() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final result = prefs.getInt('totalDisks') == null ? 3 : prefs.getInt('totalDisks');
+    return result;
+  }
 }
