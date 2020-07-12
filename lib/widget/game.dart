@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:eventify/eventify.dart';
 import 'package:flutter/material.dart';
 import 'package:hanoi_tower_control/hanoi_tower_control.dart' as control;
@@ -119,7 +121,7 @@ class _GameState extends State<Game> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   final GameController _gameController = GameController();
-  final int _totalDisks;
+  int _totalDisks;
 
   ui_pin.Disk _uiDisk;
   ui_pin.Pin _uiFirstPin;
@@ -140,6 +142,9 @@ class _GameState extends State<Game> {
   }
 
   void _startGame(int totalDisks) async {
+    setState(() {
+      _totalDisks = totalDisks;
+    });
     control.Progress startGame = await _gameController.startGame(totalDisks);
     _update(startGame);
   }
@@ -162,9 +167,12 @@ class _GameState extends State<Game> {
       child: Scaffold(
           key: _scaffoldKey,
           appBar: AppBar(
-            title: Text("Hanoi Tower Game")
+            title: Text("Finish up in ${_totalMoves(_totalDisks)} moves")
           ),
-          drawer: Setup(),
+          drawer: Setup(totalDisks: _totalDisks,
+            onAction: (totalDisks) {
+            _startGame(totalDisks);
+          },),
           body: Column(
             children: <Widget>[
               Flexible(
@@ -313,4 +321,6 @@ class _GameState extends State<Game> {
       _uiThirdPin = ui_pin.Pin(key: UniqueKey(), initialPinDisks: progress.disksThirdPin(), pinEventController: _gameController.eventControllerPin3);
     });
   }
+
+  int _totalMoves(disks) => pow(2, disks) - 1;
 }

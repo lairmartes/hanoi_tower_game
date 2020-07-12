@@ -10,12 +10,21 @@ final List<String> sliderLabel = List.unmodifiable(
 
 class Setup extends StatefulWidget {
 
+  final int totalDisks;
+  final Function onAction;
+
+  const Setup({Key key, this.totalDisks, this.onAction}) : super(key: key);
+
   @override
-  _SetupState createState() => _SetupState();
+  _SetupState createState() => _SetupState(this.totalDisks, this.onAction);
 }
 
 class _SetupState extends State<Setup> {
   int _totalDisks = 1;
+  Function _action;
+
+  _SetupState(this._totalDisks, this._action);
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -39,6 +48,7 @@ class _SetupState extends State<Setup> {
            RaisedButton(
             child: Text('New Game'),
              onPressed: () {
+                _action(_totalDisks);
                 Navigator.pop(context);
               }
            )
