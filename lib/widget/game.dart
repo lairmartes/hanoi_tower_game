@@ -1,8 +1,12 @@
+import 'dart:math';
+
 import 'package:eventify/eventify.dart';
 import 'package:flutter/material.dart';
 import 'package:hanoi_tower_control/hanoi_tower_control.dart' as control;
 import 'package:hanoi_tower_game/events/events.dart';
 import 'package:hanoi_tower_game/widget/pin.dart' as ui_pin;
+import 'package:hanoi_tower_game/widget/setup.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class GameController {
@@ -105,12 +109,10 @@ class GameController {
 
 class Game extends StatefulWidget {
 
-  final int initialDiskQuantity;
-
-  const Game({Key key, this.initialDiskQuantity}) : super(key: key);
+  const Game({Key key}) : super(key: key);
 
   @override
-  _GameState createState() => _GameState(this.initialDiskQuantity);
+  _GameState createState() => _GameState();
 }
 
 class _GameState extends State<Game> {
@@ -118,27 +120,28 @@ class _GameState extends State<Game> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   final GameController _gameController = GameController();
-  final int _totalDisks;
+  int _totalDisks;
 
   ui_pin.Disk _uiDisk;
   ui_pin.Pin _uiFirstPin;
   ui_pin.Pin _uiSecondPin;
   ui_pin.Pin _uiThirdPin;
 
-  _GameState(this._totalDisks);
-
   @override
   void initState() {
     super.initState();
 
     if (!_gameController.isGameStarted) {
-      _startGame(this._totalDisks);
+      _getFromPreferencesTotalDisks().then((totalDisks) { _startGame(totalDisks); });
     } else {
       _update(_gameController.lastProgress);
     }
   }
 
   void _startGame(int totalDisks) async {
+    setState(() {
+      _totalDisks = totalDisks;
+    });
     control.Progress startGame = await _gameController.startGame(totalDisks);
     _update(startGame);
   }
@@ -161,8 +164,13 @@ class _GameState extends State<Game> {
       child: Scaffold(
           key: _scaffoldKey,
           appBar: AppBar(
-            title: Text("Hanoi Tower Game")
+            title: Text(_totalDisks == null ? "Loading..." : "Finish up in ${_totalMoves(_totalDisks)} moves")
           ),
+          drawer: Setup(totalDisks: _totalDisks,
+            onAction: (totalDisks) {
+            _saveInPreferencesTotalDisks(totalDisks);
+            _startGame(totalDisks);
+          },),
           body: Column(
             children: <Widget>[
               Flexible(
@@ -279,7 +287,7 @@ class _GameState extends State<Game> {
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text('All disks where moved to third pin!'),
+                Text('All disks were moved to third pin!'),
                 Text('You did it in ${gameOver.moves} moves.'),
                 Text('Your score is ${(gameOver.score() * 100).toInt()} out of 100.'),
                 Visibility(
@@ -310,5 +318,19 @@ class _GameState extends State<Game> {
       _uiSecondPin = ui_pin.Pin(key: UniqueKey(), initialPinDisks: progress.disksSecondPin(), pinEventController: _gameController.eventControllerPin2);
       _uiThirdPin = ui_pin.Pin(key: UniqueKey(), initialPinDisks: progress.disksThirdPin(), pinEventController: _gameController.eventControllerPin3);
     });
+  }
+
+  int _totalMoves(disks) => pow(2, disks) - 1;
+
+  void _saveInPreferencesTotalDisks(int totalDisks) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setInt('totalDisks', totalDisks);
+  }
+
+  Future<int> _getFromPreferencesTotalDisks() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final result = prefs.getInt('totalDisks') == null ? 3 : prefs.getInt('totalDisks');
+    return result;
   }
 }
