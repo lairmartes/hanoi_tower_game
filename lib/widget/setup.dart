@@ -6,7 +6,7 @@ final List<String> sliderLabel = List.unmodifiable(
       'Kid', 'Kid Menace',
       'Young', 'Young Bravo',
       'Intellectual', 'High Concentrated',
-      'Viking', 'Viking Muléstia'] );
+      'Viking', "I've meant it!"]);
 
 class Setup extends StatefulWidget {
 
