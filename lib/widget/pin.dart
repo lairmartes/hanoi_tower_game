@@ -9,6 +9,7 @@ class Pin extends StatefulWidget {
 
   const Pin({Key key, this.initialPinDisks, this.pinEventController}) : super(key: key);
 
+
   @override
   _PinState createState() => _PinState(this.initialPinDisks, this.pinEventController);
 }
@@ -26,6 +27,13 @@ class _PinState extends State<Pin> with AutomaticKeepAliveClientMixin {
     this._pinEventController.addPinChangeEventListener(this, (ev, context) {
       _update(ev.eventData);
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    this._pinEventController = null;
+    this._pinDisks = null;
   }
 
   @override
@@ -96,9 +104,11 @@ class _PinState extends State<Pin> with AutomaticKeepAliveClientMixin {
   }
 
   _update(control.PinDisks newPinDisks) {
-     setState(() {
-      this._pinDisks = newPinDisks;
-    });
+    if (this.mounted) {
+      setState(() {
+        this._pinDisks = newPinDisks;
+      });
+    }
   }
 
   @override

@@ -1,27 +1,25 @@
 import 'package:eventify/eventify.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hanoi_tower_control/hanoi_tower_control.dart';
+import 'package:hanoi_tower_control/hanoi_tower_control.dart' as control;
 import 'package:hanoi_tower_game/events/events.dart';
 import 'package:mockito/mockito.dart';
 
 void main() {
   
   EventEmitter mockEventEmitter;
-  Game game;
+  control.Game game;
 
   setUp(() {
     mockEventEmitter = MockEventEmitter();
-    game = Game();
-
+    game = control.Game();
   });
   
   test('When pin event is published then call emitter', () async {
     PinEventController test = PinEventController(mockEventEmitter);
 
-    Progress startGame = await game.start(5);
+    control.Progress startGame = await game.start(5);
 
-    PinDisks pinEvent = startGame.disksFirstPin();
+    control.PinDisks pinEvent = startGame.disksFirstPin();
 
     test.firePinChangedEvent(pinEvent);
 
@@ -44,16 +42,16 @@ void main() {
 
     await game.start(5);
 
-    Progress diskGrabbedProgress = await game.grabFromFirstPin();
+    control.Progress diskGrabbedProgress = await game.grabFromFirstPin();
 
-    Disk diskGrabbed = diskGrabbedProgress.diskGrabbed;
+    control.Disk diskGrabbed = diskGrabbedProgress.diskGrabbed;
 
     test.fireDiskGrabbed(diskGrabbed);
 
     verify(mockEventEmitter.emit(DiskEventController.diskGrabbedEvent, test, diskGrabbed));
   });
 
-  test('When disk is dropeed then call emitter to disk dropped event', () async {
+  test('When disk is dropped then call emitter to disk dropped event', ()  {
     DiskEventController test = DiskEventController(mockEventEmitter);
 
     test.fireDiskDropped();
@@ -61,7 +59,7 @@ void main() {
     verify(mockEventEmitter.emit(DiskEventController.diskDroppedEvent, test));
   });
 
-  test('When disk event listener is added then event is added to emitter for all events', () async {
+  test('When disk event listener is added then event is added to emitter for all events', () {
     DiskEventController test = DiskEventController(mockEventEmitter);
 
     Object context = Object();
@@ -71,8 +69,9 @@ void main() {
     };
     
     test.addDiskChangedEventListener(context, callback);
-    
-    verify(mockEventEmitter.on(any, context, callback)).called(2);
+
+    verify(mockEventEmitter.on(DiskEventController.diskDroppedEvent, context, callback));
+    verify(mockEventEmitter.on(DiskEventController.diskGrabbedEvent, context, callback));
   });
 }
 
