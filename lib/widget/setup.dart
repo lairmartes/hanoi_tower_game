@@ -22,7 +22,7 @@ class _SetupState extends State<Setup> {
        child: Column(
          children: <Widget>[
            DrawerHeader(
-             child: Text('Challenge: ${sliderLabel[_totalDisks - 1]}'),
+             child: Image.asset('images/levels/level_$_totalDisks.png', alignment: Alignment.center,),
            ),
            Slider(
              value: _totalDisks * 1.0,
