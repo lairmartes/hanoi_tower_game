@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hanoi_tower_control/hanoi_tower_control.dart' as control;
 import 'package:hanoi_tower_game/events/events.dart';
 import 'package:hanoi_tower_game/widget/pin.dart' as ui_pin;
+import 'package:hanoi_tower_game/widget/setup.dart';
 
 
 class GameController {
@@ -163,6 +164,7 @@ class _GameState extends State<Game> {
           appBar: AppBar(
             title: Text("Hanoi Tower Game")
           ),
+          drawer: Setup(),
           body: Column(
             children: <Widget>[
               Flexible(
@@ -279,7 +281,7 @@ class _GameState extends State<Game> {
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text('All disks where moved to third pin!'),
+                Text('All disks were moved to third pin!'),
                 Text('You did it in ${gameOver.moves} moves.'),
                 Text('Your score is ${(gameOver.score() * 100).toInt()} out of 100.'),
                 Visibility(
