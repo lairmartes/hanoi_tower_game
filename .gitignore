@@ -7,3 +7,5 @@
 /pubspec.lock
 /*.iml
 /test/widget/failures/
+/.flutter-plugins
+/.flutter-plugins-dependencies
