@@ -76,11 +76,11 @@ class _PinState extends State<Pin> with AutomaticKeepAliveClientMixin {
     }
     var result =  <Widget>[
       Positioned(
-          left: _calculateMiddle(availableWidth, 10),
-          bottom: 5,
+          left: _calculateMiddle(availableWidth, 7),
+          bottom: 30,
           child: SizedBox(
-            width: 10.0,
-            height: availableHeight * reduceDiskFactor,
+            width: 7.0,
+            height: availableHeight * .60,
             child: DecoratedBox(
               decoration: BoxDecoration(
                   color: _pinColor
@@ -90,8 +90,7 @@ class _PinState extends State<Pin> with AutomaticKeepAliveClientMixin {
       ),
 
       Positioned(
-        //top: availableHeight - 20,
-        bottom: 5,
+        bottom: 20,
         left: _calculateMiddle(availableWidth, _calculateDiskWidth(availableWidth, 10)),
         child: SizedBox(
           width: availableWidth * reduceDiskFactor,
@@ -107,12 +106,12 @@ class _PinState extends State<Pin> with AutomaticKeepAliveClientMixin {
 
 
     if (pinDisks != null) {
-      var floor = 15.0;
+      var floor = 30.0;
       var disks = pinDisks.disks.reversed;
       disks.forEach((disk) {
         var left = _calculateMiddle(availableWidth, _calculateDiskWidth(availableWidth, disk.size));
-        result.add(_createDisk(floor, left, disk.size, availableWidth));
-        floor = floor + 20.0;
+        result.add(_createDisk(context, floor, left, disk.size, availableWidth));
+        floor = floor + _calculateDiskHeight(context);
       });
     }
 
@@ -135,7 +134,8 @@ final double reduceDiskFactor = 0.75;
 
 
 
-Widget _createDisk(double positionTop, double positionLeft ,int diskSize, double availableWidth) {
+Widget _createDisk(BuildContext context, double positionTop,
+                double positionLeft ,int diskSize, double availableWidth) {
 
   if (diskSize < 1) return _createDiskZero(positionTop, positionLeft);
 
@@ -144,7 +144,7 @@ Widget _createDisk(double positionTop, double positionLeft ,int diskSize, double
     left: positionLeft, //,
     child: SizedBox(
       width: _calculateDiskWidth(availableWidth, diskSize),
-      height: 20,
+      height: _calculateDiskHeight(context),
       child: DecoratedBox(
         decoration: BoxDecoration(
             color: _diskColors.elementAt(diskSize-1)
@@ -204,7 +204,7 @@ class _DiskState extends State<Disk> {
       children: <Widget>[
         Scaffold(
         ),
-        _createDisk(1, 20, diskSize, availableWidth/parts)
+        _createDisk(context, 1, 20, diskSize, availableWidth/parts)
       ],
     );
   }
@@ -214,4 +214,8 @@ class _DiskState extends State<Disk> {
       this._disk = newDisk;
     });
   }
+}
+
+double _calculateDiskHeight(BuildContext context) {
+  return MediaQuery.of(context).orientation == Orientation.landscape ? 24 : 15;
 }

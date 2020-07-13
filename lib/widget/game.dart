@@ -155,11 +155,10 @@ class _GameState extends State<Game> {
             .fireDiskGrabbed(moveDisk.diskGrabbed);
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(15.0),
+
       child: Scaffold(
           key: _scaffoldKey,
           appBar: AppBar(
