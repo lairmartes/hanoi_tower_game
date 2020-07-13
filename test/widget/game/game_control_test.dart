@@ -6,7 +6,7 @@ void main() {
   test('When game start with 3 disks, then last progress is equal to test game progress', () async {
 
     control.Game testControlGame = control.Game();
-    GameController gameController = GameController();
+    GameHelper gameController = GameHelper();
 
     control.Progress expected = await testControlGame.start(3);
 
@@ -20,7 +20,7 @@ void main() {
   test('When disk is grabbed, then las progress is equal to the test game progress', () async {
 
     control.Game testControlGame = control.Game();
-    GameController gameController = GameController();
+    GameHelper gameController = GameHelper();
 
     await testControlGame.start(3);
     control.Progress expected = await testControlGame.grabFromFirstPin();
@@ -36,7 +36,7 @@ void main() {
   test('When moved from disk 1 to disk 2, then las progress is equal to the test game progress', () async {
 
     control.Game testControlGame = control.Game();
-    GameController gameController = GameController();
+    GameHelper gameController = GameHelper();
 
     await testControlGame.start(3);
     var grabDisk = await testControlGame.grabFromFirstPin();
