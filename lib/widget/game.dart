@@ -121,19 +121,17 @@ class _GameState extends State<Game> {
 
   final GameController _gameController = GameController();
 
-  control.Progress currentProgress;
+  control.Progress _currentProgress;
   int _totalDisks;
-
-  Pin _uiFirstPin;
-  Pin _uiSecondPin;
-  Pin _uiThirdPin;
 
   @override
   void initState() {
     super.initState();
 
     if (!_gameController.isGameStarted) {
-      _getFromPreferencesTotalDisks().then((totalDisks) { _startGame(totalDisks); });
+      _getFromPreferencesTotalDisks().then((totalDisks) {
+        _startGame(totalDisks);
+      });
     } else {
       _update(_gameController.lastProgress);
     }
@@ -176,7 +174,8 @@ class _GameState extends State<Game> {
             children: <Widget>[
               Flexible(
                 flex: 2,
-                child: _gameController.lastProgress == null ? Text("Loading...") : Disk(disk:_gameController.lastProgress.diskGrabbed,
+                child: _currentProgress == null ? Text("Loading...") :
+                          Disk(disk:_currentProgress.diskGrabbed,
                             eventController: _gameController.eventControllerDisk,)
               ),
               Flexible(
@@ -225,8 +224,8 @@ class _GameState extends State<Game> {
                   _talkToPlayer(e.message);
                 }
               },
-              child: _gameController.lastProgress == null ? Text("Loading...") :
-                      Pin(key: UniqueKey(), disks: _gameController.lastProgress.disksFirstPin(),
+              child: _currentProgress == null ? Text("Loading...") :
+                      Pin(key: UniqueKey(), disks: _currentProgress.disksFirstPin(),
                           eventController: _gameController.eventControllerPin1)
           )
       ),
@@ -245,8 +244,8 @@ class _GameState extends State<Game> {
                 _talkToPlayer(e.message);
               }
              },
-            child: _gameController.lastProgress == null ? Text("Loading...") :
-                    Pin(key: UniqueKey(), disks: _gameController.lastProgress.disksSecondPin(),
+            child: _currentProgress == null ? Text("Loading...") :
+                    Pin(key: UniqueKey(), disks: _currentProgress.disksSecondPin(),
                           eventController: _gameController.eventControllerPin2),
           )
       ),
@@ -268,8 +267,8 @@ class _GameState extends State<Game> {
                   _talkToPlayer(e.message);
                 }
               },
-              child: _gameController.lastProgress == null ? Text("Loading...") :
-                        Pin(key: UniqueKey(), disks: _gameController.lastProgress.disksThirdPin(),
+              child: _currentProgress == null ? Text("Loading...") :
+                        Pin(key: UniqueKey(), disks: _currentProgress.disksThirdPin(),
                               eventController: _gameController.eventControllerPin3)
           )
       ),
@@ -321,7 +320,7 @@ class _GameState extends State<Game> {
 
   void _update(control.Progress progress) {
     setState(() {
-      currentProgress = progress;
+      _currentProgress = progress;
     });
   }
 
