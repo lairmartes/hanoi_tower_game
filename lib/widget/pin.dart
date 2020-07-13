@@ -2,6 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:hanoi_tower_control/hanoi_tower_control.dart' as control;
 import 'package:hanoi_tower_game/events/events.dart';
 
+final List<Color> _diskColors = List.unmodifiable([
+  Colors.green[300],
+  Colors.green[600],
+  Colors.green[900],
+  Colors.blue[300],
+  Colors.blue[600],
+  Colors.blue[900],
+  Colors.purple[300],
+  Colors.purple[600],
+  Colors.purple[900],
+  Colors.yellow[900],
+]
+);
+
+final Color _pinColor = Colors.grey.shade700;
+
 class Pin extends StatefulWidget {
 
   final control.PinDisks initialPinDisks;
@@ -116,22 +132,6 @@ class _PinState extends State<Pin> with AutomaticKeepAliveClientMixin {
 }
 
 final double reduceDiskFactor = 0.75;
-
-final List<Color> _diskColors = List.unmodifiable([
-    Colors.purpleAccent.shade100,
-    Colors.greenAccent.shade200,
-    Colors.redAccent.shade100,
-    Colors.blueAccent.shade400,
-    Colors.purpleAccent.shade400,
-    Colors.greenAccent.shade400,
-    Colors.redAccent.shade400,
-    Colors.blueAccent.shade400,
-    Colors.purpleAccent.shade700,
-    Colors.greenAccent.shade700,
-  ]
-);
-
-final Color _pinColor = Colors.grey.shade700;
 
 
 
