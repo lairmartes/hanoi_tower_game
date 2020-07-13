@@ -4,7 +4,7 @@ import 'package:eventify/eventify.dart';
 import 'package:flutter/material.dart';
 import 'package:hanoi_tower_control/hanoi_tower_control.dart' as control;
 import 'package:hanoi_tower_game/events/events.dart';
-import 'package:hanoi_tower_game/widget/pin.dart' as ui_pin;
+import 'package:hanoi_tower_game/widget/pin.dart';
 import 'package:hanoi_tower_game/widget/setup.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -120,12 +120,13 @@ class _GameState extends State<Game> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   final GameController _gameController = GameController();
+
+  control.Progress currentProgress;
   int _totalDisks;
 
-  ui_pin.Disk _uiDisk;
-  ui_pin.Pin _uiFirstPin;
-  ui_pin.Pin _uiSecondPin;
-  ui_pin.Pin _uiThirdPin;
+  Pin _uiFirstPin;
+  Pin _uiSecondPin;
+  Pin _uiThirdPin;
 
   @override
   void initState() {
@@ -175,7 +176,8 @@ class _GameState extends State<Game> {
             children: <Widget>[
               Flexible(
                 flex: 2,
-                child: _uiDisk == null ? Text("Waiting...") : _uiDisk
+                child: _gameController.lastProgress == null ? Text("Loading...") : Disk(disk:_gameController.lastProgress.diskGrabbed,
+                            eventController: _gameController.eventControllerDisk,)
               ),
               Flexible(
                   flex: 20,
@@ -223,7 +225,9 @@ class _GameState extends State<Game> {
                   _talkToPlayer(e.message);
                 }
               },
-              child: _uiFirstPin
+              child: _gameController.lastProgress == null ? Text("Loading...") :
+                      Pin(key: UniqueKey(), disks: _gameController.lastProgress.disksFirstPin(),
+                          eventController: _gameController.eventControllerPin1)
           )
       ),
       Flexible(
@@ -241,7 +245,9 @@ class _GameState extends State<Game> {
                 _talkToPlayer(e.message);
               }
              },
-            child: _uiSecondPin,
+            child: _gameController.lastProgress == null ? Text("Loading...") :
+                    Pin(key: UniqueKey(), disks: _gameController.lastProgress.disksSecondPin(),
+                          eventController: _gameController.eventControllerPin2),
           )
       ),
       Flexible(
@@ -262,7 +268,9 @@ class _GameState extends State<Game> {
                   _talkToPlayer(e.message);
                 }
               },
-              child: _uiThirdPin
+              child: _gameController.lastProgress == null ? Text("Loading...") :
+                        Pin(key: UniqueKey(), disks: _gameController.lastProgress.disksThirdPin(),
+                              eventController: _gameController.eventControllerPin3)
           )
       ),
     ];
@@ -313,10 +321,7 @@ class _GameState extends State<Game> {
 
   void _update(control.Progress progress) {
     setState(() {
-      _uiDisk = ui_pin.Disk(progress.diskGrabbed, _gameController.eventControllerDisk);
-      _uiFirstPin = ui_pin.Pin(key: UniqueKey(), initialPinDisks: progress.disksFirstPin(), pinEventController: _gameController.eventControllerPin1);
-      _uiSecondPin = ui_pin.Pin(key: UniqueKey(), initialPinDisks: progress.disksSecondPin(), pinEventController: _gameController.eventControllerPin2);
-      _uiThirdPin = ui_pin.Pin(key: UniqueKey(), initialPinDisks: progress.disksThirdPin(), pinEventController: _gameController.eventControllerPin3);
+      currentProgress = progress;
     });
   }
 

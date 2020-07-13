@@ -20,14 +20,14 @@ final Color _pinColor = Colors.grey.shade700;
 
 class Pin extends StatefulWidget {
 
-  final control.PinDisks initialPinDisks;
-  final PinEventController pinEventController;
+  final control.PinDisks disks;
+  final PinEventController eventController;
 
-  const Pin({Key key, this.initialPinDisks, this.pinEventController}) : super(key: key);
+  const Pin({Key key, this.disks, this.eventController}) : super(key: key);
 
 
   @override
-  _PinState createState() => _PinState(this.initialPinDisks, this.pinEventController);
+  _PinState createState() => _PinState(this.disks, this.eventController);
 }
 
 class _PinState extends State<Pin> with AutomaticKeepAliveClientMixin {
@@ -170,13 +170,13 @@ _calculateDiskWidth(double availableWidth, int diskSize) => availableWidth * red
 
 class Disk extends StatefulWidget {
 
-  final control.Disk _initialDisk;
-  final DiskEventController _diskEventController;
+  final control.Disk disk;
+  final DiskEventController eventController;
 
-  Disk(this._initialDisk, this._diskEventController);
+  const Disk({Key key, this.disk, this.eventController}) : super(key: key);
 
   @override
-  _DiskState createState() => _DiskState(this._initialDisk, this._diskEventController);
+  _DiskState createState() => _DiskState(this.disk, this.eventController);
 }
 
 class _DiskState extends State<Disk> {
