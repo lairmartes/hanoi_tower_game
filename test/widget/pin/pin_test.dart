@@ -22,7 +22,7 @@ void main() {
 
     control.Progress progress = await game.start(4);
 
-    await tester.pumpWidget(MaterialApp(home: ui_game.Pin(initialPinDisks: progress.disksFirstPin(), pinEventController: pinEventControl)));
+    await tester.pumpWidget(MaterialApp(home: ui_game.Pin(disks: progress.disksFirstPin(), eventController: pinEventControl)));
 
     await expectLater(find.byType(ui_game.Pin), matchesGoldenFile('pin_start_with_4_disks.png'));
   });
@@ -31,7 +31,7 @@ void main() {
 
     control.Progress progress = await game.start(1);
 
-    await tester.pumpWidget(MaterialApp(home: ui_game.Pin(initialPinDisks: progress.disksFirstPin(), pinEventController: pinEventControl)));
+    await tester.pumpWidget(MaterialApp(home: ui_game.Pin(disks: progress.disksFirstPin(), eventController: pinEventControl)));
 
     await expectLater(find.byType(ui_game.Pin), matchesGoldenFile('pin_start_with_min_disks.png'));
   });
@@ -40,7 +40,7 @@ void main() {
 
     control.Progress progress = await game.start(10);
 
-    await tester.pumpWidget(MaterialApp(home: ui_game.Pin(initialPinDisks: progress.disksFirstPin(), pinEventController: pinEventControl)));
+    await tester.pumpWidget(MaterialApp(home: ui_game.Pin(disks: progress.disksFirstPin(), eventController: pinEventControl)));
 
     await expectLater(find.byType(ui_game.Pin), matchesGoldenFile('pin_start_with_max_disks.png'));
   });
@@ -49,7 +49,7 @@ void main() {
 
     control.Progress progress = await game.start(1);
 
-    await tester.pumpWidget(MaterialApp(home: ui_game.Pin(initialPinDisks: progress.disksSecondPin(), pinEventController: pinEventControl)));
+    await tester.pumpWidget(MaterialApp(home: ui_game.Pin(disks: progress.disksSecondPin(), eventController: pinEventControl)));
 
     await expectLater(find.byType(ui_game.Pin), matchesGoldenFile('pin_start_with_zero_disks.png'));
   });

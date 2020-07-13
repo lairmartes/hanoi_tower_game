@@ -4,12 +4,12 @@ import 'package:eventify/eventify.dart';
 import 'package:flutter/material.dart';
 import 'package:hanoi_tower_control/hanoi_tower_control.dart' as control;
 import 'package:hanoi_tower_game/events/events.dart';
-import 'package:hanoi_tower_game/widget/pin.dart' as ui_pin;
+import 'package:hanoi_tower_game/widget/pin.dart';
 import 'package:hanoi_tower_game/widget/setup.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
-class GameController {
+class GameHelper {
   final PinEventController _eventControllerPin1 = PinEventController(EventEmitter());
   final PinEventController _eventControllerPin2 = PinEventController(EventEmitter());
   final PinEventController _eventControllerPin3 = PinEventController(EventEmitter());
@@ -119,22 +119,21 @@ class _GameState extends State<Game> {
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  final GameController _gameController = GameController();
-  int _totalDisks;
+  final GameHelper _gameHelper = GameHelper();
 
-  ui_pin.Disk _uiDisk;
-  ui_pin.Pin _uiFirstPin;
-  ui_pin.Pin _uiSecondPin;
-  ui_pin.Pin _uiThirdPin;
+  control.Progress _currentProgress;
+  int _totalDisks;
 
   @override
   void initState() {
     super.initState();
 
-    if (!_gameController.isGameStarted) {
-      _getFromPreferencesTotalDisks().then((totalDisks) { _startGame(totalDisks); });
+    if (!_gameHelper.isGameStarted) {
+      _getFromPreferencesTotalDisks().then((totalDisks) {
+        _startGame(totalDisks);
+      });
     } else {
-      _update(_gameController.lastProgress);
+      _update(_gameHelper.lastProgress);
     }
   }
 
@@ -142,7 +141,7 @@ class _GameState extends State<Game> {
     setState(() {
       _totalDisks = totalDisks;
     });
-    control.Progress startGame = await _gameController.startGame(totalDisks);
+    control.Progress startGame = await _gameHelper.startGame(totalDisks);
     _update(startGame);
   }
 
@@ -151,16 +150,15 @@ class _GameState extends State<Game> {
     _update(moveDisk);
 
     moveDisk.diskGrabbed == null
-        ? _gameController.eventControllerDisk.fireDiskDropped()
-        : _gameController.eventControllerDisk
+        ? _gameHelper.eventControllerDisk.fireDiskDropped()
+        : _gameHelper.eventControllerDisk
             .fireDiskGrabbed(moveDisk.diskGrabbed);
   }
-
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(15.0),
+
       child: Scaffold(
           key: _scaffoldKey,
           appBar: AppBar(
@@ -175,7 +173,9 @@ class _GameState extends State<Game> {
             children: <Widget>[
               Flexible(
                 flex: 2,
-                child: _uiDisk == null ? Text("Waiting...") : _uiDisk
+                child: _currentProgress == null ? Text("Loading...") :
+                          Disk(disk:_currentProgress.diskGrabbed,
+                            eventController: _gameHelper.eventControllerDisk,)
               ),
               Flexible(
                   flex: 20,
@@ -213,9 +213,9 @@ class _GameState extends State<Game> {
           child:InkWell(
               onTap: () async {
                 try {
-                  control.Progress moveDisk = await _gameController.moveDisk(1);
+                  control.Progress moveDisk = await _gameHelper.moveDisk(1);
                   _updateDiskMoved(moveDisk);
-                  _gameController.eventControllerPin1
+                  _gameHelper.eventControllerPin1
                       .firePinChangedEvent(moveDisk.disksFirstPin());
                 } on ArgumentError catch(e) {
                   _talkToPlayer(e.message);
@@ -223,7 +223,9 @@ class _GameState extends State<Game> {
                   _talkToPlayer(e.message);
                 }
               },
-              child: _uiFirstPin
+              child: _currentProgress == null ? Text("Loading...") :
+                      Pin(key: UniqueKey(), disks: _currentProgress.disksFirstPin(),
+                          eventController: _gameHelper.eventControllerPin1)
           )
       ),
       Flexible(
@@ -231,9 +233,9 @@ class _GameState extends State<Game> {
           child:InkWell(
             onTap: () async {
               try  {
-                control.Progress moveDisk = await _gameController.moveDisk(2);
+                control.Progress moveDisk = await _gameHelper.moveDisk(2);
                 _updateDiskMoved(moveDisk);
-                _gameController.eventControllerPin2
+                _gameHelper.eventControllerPin2
                     .firePinChangedEvent(moveDisk.disksSecondPin());
               } on ArgumentError catch(e) {
                 _talkToPlayer(e.message);
@@ -241,7 +243,9 @@ class _GameState extends State<Game> {
                 _talkToPlayer(e.message);
               }
              },
-            child: _uiSecondPin,
+            child: _currentProgress == null ? Text("Loading...") :
+                    Pin(key: UniqueKey(), disks: _currentProgress.disksSecondPin(),
+                          eventController: _gameHelper.eventControllerPin2),
           )
       ),
       Flexible(
@@ -249,9 +253,9 @@ class _GameState extends State<Game> {
           child:InkWell(
               onTap: () async {
                 try {
-                  control.Progress moveDisk = await _gameController.moveDisk(3);
+                  control.Progress moveDisk = await _gameHelper.moveDisk(3);
                   _updateDiskMoved(moveDisk);
-                  _gameController.eventControllerPin3
+                  _gameHelper.eventControllerPin3
                       .firePinChangedEvent(moveDisk.disksThirdPin());
                   if (moveDisk.isGameOver) {
                     _showGameOver(context, moveDisk);
@@ -262,7 +266,9 @@ class _GameState extends State<Game> {
                   _talkToPlayer(e.message);
                 }
               },
-              child: _uiThirdPin
+              child: _currentProgress == null ? Text("Loading...") :
+                        Pin(key: UniqueKey(), disks: _currentProgress.disksThirdPin(),
+                              eventController: _gameHelper.eventControllerPin3)
           )
       ),
     ];
@@ -313,10 +319,7 @@ class _GameState extends State<Game> {
 
   void _update(control.Progress progress) {
     setState(() {
-      _uiDisk = ui_pin.Disk(progress.diskGrabbed, _gameController.eventControllerDisk);
-      _uiFirstPin = ui_pin.Pin(key: UniqueKey(), initialPinDisks: progress.disksFirstPin(), pinEventController: _gameController.eventControllerPin1);
-      _uiSecondPin = ui_pin.Pin(key: UniqueKey(), initialPinDisks: progress.disksSecondPin(), pinEventController: _gameController.eventControllerPin2);
-      _uiThirdPin = ui_pin.Pin(key: UniqueKey(), initialPinDisks: progress.disksThirdPin(), pinEventController: _gameController.eventControllerPin3);
+      _currentProgress = progress;
     });
   }
 

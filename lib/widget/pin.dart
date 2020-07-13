@@ -2,16 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:hanoi_tower_control/hanoi_tower_control.dart' as control;
 import 'package:hanoi_tower_game/events/events.dart';
 
+final List<Color> _diskColors = List.unmodifiable([
+  Colors.green[300],
+  Colors.green[600],
+  Colors.green[900],
+  Colors.blue[300],
+  Colors.blue[600],
+  Colors.blue[900],
+  Colors.purple[300],
+  Colors.purple[600],
+  Colors.purple[900],
+  Colors.redAccent.shade700,
+]
+);
+
+final Color _pinColor = Colors.grey.shade700;
+
 class Pin extends StatefulWidget {
 
-  final control.PinDisks initialPinDisks;
-  final PinEventController pinEventController;
+  final control.PinDisks disks;
+  final PinEventController eventController;
 
-  const Pin({Key key, this.initialPinDisks, this.pinEventController}) : super(key: key);
+  const Pin({Key key, this.disks, this.eventController}) : super(key: key);
 
 
   @override
-  _PinState createState() => _PinState(this.initialPinDisks, this.pinEventController);
+  _PinState createState() => _PinState(this.disks, this.eventController);
 }
 
 class _PinState extends State<Pin> with AutomaticKeepAliveClientMixin {
@@ -60,11 +76,11 @@ class _PinState extends State<Pin> with AutomaticKeepAliveClientMixin {
     }
     var result =  <Widget>[
       Positioned(
-          left: _calculateMiddle(availableWidth, 10),
-          bottom: 5,
+          left: _calculateMiddle(availableWidth, 7),
+          bottom: 30,
           child: SizedBox(
-            width: 10.0,
-            height: availableHeight * reduceDiskFactor,
+            width: 7.0,
+            height: availableHeight * .60,
             child: DecoratedBox(
               decoration: BoxDecoration(
                   color: _pinColor
@@ -74,8 +90,7 @@ class _PinState extends State<Pin> with AutomaticKeepAliveClientMixin {
       ),
 
       Positioned(
-        //top: availableHeight - 20,
-        bottom: 5,
+        bottom: 20,
         left: _calculateMiddle(availableWidth, _calculateDiskWidth(availableWidth, 10)),
         child: SizedBox(
           width: availableWidth * reduceDiskFactor,
@@ -91,12 +106,12 @@ class _PinState extends State<Pin> with AutomaticKeepAliveClientMixin {
 
 
     if (pinDisks != null) {
-      var floor = 15.0;
+      var floor = 30.0;
       var disks = pinDisks.disks.reversed;
       disks.forEach((disk) {
         var left = _calculateMiddle(availableWidth, _calculateDiskWidth(availableWidth, disk.size));
-        result.add(_createDisk(floor, left, disk.size, availableWidth));
-        floor = floor + 20.0;
+        result.add(_createDisk(context, floor, left, disk.size, availableWidth));
+        floor = floor + _calculateDiskHeight(context);
       });
     }
 
@@ -117,25 +132,10 @@ class _PinState extends State<Pin> with AutomaticKeepAliveClientMixin {
 
 final double reduceDiskFactor = 0.75;
 
-final List<Color> _diskColors = List.unmodifiable([
-    Colors.purpleAccent.shade100,
-    Colors.greenAccent.shade200,
-    Colors.redAccent.shade100,
-    Colors.blueAccent.shade400,
-    Colors.purpleAccent.shade400,
-    Colors.greenAccent.shade400,
-    Colors.redAccent.shade400,
-    Colors.blueAccent.shade400,
-    Colors.purpleAccent.shade700,
-    Colors.greenAccent.shade700,
-  ]
-);
-
-final Color _pinColor = Colors.grey.shade700;
 
 
-
-Widget _createDisk(double positionTop, double positionLeft ,int diskSize, double availableWidth) {
+Widget _createDisk(BuildContext context, double positionTop,
+                double positionLeft ,int diskSize, double availableWidth) {
 
   if (diskSize < 1) return _createDiskZero(positionTop, positionLeft);
 
@@ -144,7 +144,7 @@ Widget _createDisk(double positionTop, double positionLeft ,int diskSize, double
     left: positionLeft, //,
     child: SizedBox(
       width: _calculateDiskWidth(availableWidth, diskSize),
-      height: 20,
+      height: _calculateDiskHeight(context),
       child: DecoratedBox(
         decoration: BoxDecoration(
             color: _diskColors.elementAt(diskSize-1)
@@ -170,13 +170,13 @@ _calculateDiskWidth(double availableWidth, int diskSize) => availableWidth * red
 
 class Disk extends StatefulWidget {
 
-  final control.Disk _initialDisk;
-  final DiskEventController _diskEventController;
+  final control.Disk disk;
+  final DiskEventController eventController;
 
-  Disk(this._initialDisk, this._diskEventController);
+  const Disk({Key key, this.disk, this.eventController}) : super(key: key);
 
   @override
-  _DiskState createState() => _DiskState(this._initialDisk, this._diskEventController);
+  _DiskState createState() => _DiskState(this.disk, this.eventController);
 }
 
 class _DiskState extends State<Disk> {
@@ -204,7 +204,7 @@ class _DiskState extends State<Disk> {
       children: <Widget>[
         Scaffold(
         ),
-        _createDisk(1, 20, diskSize, availableWidth/parts)
+        _createDisk(context, 1, 20, diskSize, availableWidth/parts)
       ],
     );
   }
@@ -214,4 +214,8 @@ class _DiskState extends State<Disk> {
       this._disk = newDisk;
     });
   }
+}
+
+double _calculateDiskHeight(BuildContext context) {
+  return MediaQuery.of(context).orientation == Orientation.landscape ? 24 : 15;
 }
