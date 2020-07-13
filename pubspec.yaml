@@ -24,7 +24,18 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  flutter_launcher_icons: ^0.7.3
+  flutter_launcher_name: ^0.0.1
+
   mockito: ^4.1.1
+
+flutter_icons:
+  image_path: "icon/icon.png"
+  android: true
+  ios: true
+
+flutter_launcher_name:
+  name: "Hanoi Tower"
 
 flutter:
   assets:
@@ -38,5 +49,7 @@ flutter:
     - images/levels/level_8.png
     - images/levels/level_9.png
     - images/levels/level_10.png
+
   uses-material-design: true
+
 
