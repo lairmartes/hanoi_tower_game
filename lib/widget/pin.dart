@@ -80,7 +80,7 @@ class _PinState extends State<Pin> with AutomaticKeepAliveClientMixin {
           bottom: 30,
           child: SizedBox(
             width: 7.0,
-            height: availableHeight * .60,
+            height: _calculateDiskHeight(context) * 10 + 5,
             child: DecoratedBox(
               decoration: BoxDecoration(
                   color: _pinColor
@@ -130,7 +130,7 @@ class _PinState extends State<Pin> with AutomaticKeepAliveClientMixin {
   bool get wantKeepAlive => true;
 }
 
-final double reduceDiskFactor = 0.75;
+final double reduceDiskFactor = 0.95;
 
 Widget _createDisk(BuildContext context, double positionTop,
                 double positionLeft ,int diskSize, double availableWidth) {
