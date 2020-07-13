@@ -132,8 +132,6 @@ class _PinState extends State<Pin> with AutomaticKeepAliveClientMixin {
 
 final double reduceDiskFactor = 0.75;
 
-
-
 Widget _createDisk(BuildContext context, double positionTop,
                 double positionLeft ,int diskSize, double availableWidth) {
 
