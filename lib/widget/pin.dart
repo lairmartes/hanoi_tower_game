@@ -12,7 +12,7 @@ final List<Color> _diskColors = List.unmodifiable([
   Colors.purple[300],
   Colors.purple[600],
   Colors.purple[900],
-  Colors.yellow[900],
+  Colors.redAccent.shade700,
 ]
 );
 
