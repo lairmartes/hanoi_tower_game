@@ -18,9 +18,7 @@ class GameHelper {
 
   final control.Game _game = control.Game();
 
-  control.Progress _lastProgress = control.Progress(
-    0, false, control.Disk(1), 0, control.PinDisks(stack.Stack(), 0), control.PinDisks(stack.Stack(), 0), control.PinDisks(stack.Stack(), 0)
-  );
+  control.Progress _lastProgress;
 
   Future<control.Progress> startGame(int totalDisks) {
 
