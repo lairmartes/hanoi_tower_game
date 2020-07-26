@@ -143,6 +143,7 @@ class _GameState extends State<Game> {
     });
     control.Progress startGame = await _gameHelper.startGame(totalDisks);
     _update(startGame);
+    _updateDiskMoved(startGame);
   }
 
   void _updateDiskMoved(control.Progress moveDisk) async {
