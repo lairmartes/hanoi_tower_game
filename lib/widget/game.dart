@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:stack/stack.dart' as stack;
 
 import 'package:eventify/eventify.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,9 @@ class GameHelper {
 
   final control.Game _game = control.Game();
 
-  control.Progress _lastProgress;
+  control.Progress _lastProgress = control.Progress(
+    0, false, control.Disk(1), 0, control.PinDisks(stack.Stack(), 0), control.PinDisks(stack.Stack(), 0), control.PinDisks(stack.Stack(), 0)
+  );
 
   Future<control.Progress> startGame(int totalDisks) {
 
@@ -103,7 +106,7 @@ class GameHelper {
 
   control.Progress get lastProgress => _lastProgress;
 
-  bool get isGameStarted => _lastProgress != null;
+  bool get isGameStarted => false;
 }
 
 
@@ -121,7 +124,10 @@ class _GameState extends State<Game> {
 
   final GameHelper _gameHelper = GameHelper();
 
-  control.Progress _currentProgress;
+  control.Progress _currentProgress = control.Progress(
+      0, false, control.Disk(1), 0, control.PinDisks(stack.Stack(), 0), control.PinDisks(stack.Stack(), 0), control.PinDisks(stack.Stack(), 0)
+  );
+
   int _totalDisks;
 
   @override
@@ -174,8 +180,7 @@ class _GameState extends State<Game> {
             children: <Widget>[
               Flexible(
                 flex: 2,
-                child: _currentProgress == null ? Text("Loading...") :
-                          Disk(disk:_currentProgress.diskGrabbed,
+                child: Disk(disk: _currentProgress.diskGrabbed,
                             eventController: _gameHelper.eventControllerDisk,)
               ),
               Flexible(
@@ -207,69 +212,43 @@ class _GameState extends State<Game> {
     );
   }
 
+
   List<Widget> _buildAllPins(BuildContext context) {
     return <Widget>[
       Flexible(
           flex: 2,
-          child:InkWell(
-              onTap: () async {
-                try {
-                  control.Progress moveDisk = await _gameHelper.moveDisk(1);
-                  _updateDiskMoved(moveDisk);
-                  _gameHelper.eventControllerPin1
-                      .firePinChangedEvent(moveDisk.disksFirstPin());
-                } on ArgumentError catch(e) {
-                  _talkToPlayer(e.message);
-                } on StateError catch(e) {
-                  _talkToPlayer(e.message);
-                }
-              },
-              child: _currentProgress == null ? Text("Loading...") :
-                      Pin(key: UniqueKey(), disks: _currentProgress.disksFirstPin(),
-                          eventController: _gameHelper.eventControllerPin1)
+          child: PinsRepository(
+            gameHelper: _gameHelper,
+            pinDisks: _currentProgress.disksFirstPin(),
+            pinEventController: _gameHelper.eventControllerPin1,
+            pinNumber: 1,
+            onMoveComplete: _updateDiskMoved,
+            onMoveError: _talkToPlayer,
+            onGameOver: _showGameOver,
+        )
+      ),
+      Flexible(
+          flex: 2,
+          child: PinsRepository(
+            gameHelper: _gameHelper,
+            pinDisks: _currentProgress.disksSecondPin(),
+            pinEventController: _gameHelper.eventControllerPin2,
+            pinNumber: 2,
+            onMoveComplete: _updateDiskMoved,
+            onMoveError: _talkToPlayer,
+            onGameOver: _showGameOver,
           )
       ),
       Flexible(
           flex: 2,
-          child:InkWell(
-            onTap: () async {
-              try  {
-                control.Progress moveDisk = await _gameHelper.moveDisk(2);
-                _updateDiskMoved(moveDisk);
-                _gameHelper.eventControllerPin2
-                    .firePinChangedEvent(moveDisk.disksSecondPin());
-              } on ArgumentError catch(e) {
-                _talkToPlayer(e.message);
-              } on StateError catch(e) {
-                _talkToPlayer(e.message);
-              }
-             },
-            child: _currentProgress == null ? Text("Loading...") :
-                    Pin(key: UniqueKey(), disks: _currentProgress.disksSecondPin(),
-                          eventController: _gameHelper.eventControllerPin2),
-          )
-      ),
-      Flexible(
-          flex: 2,
-          child:InkWell(
-              onTap: () async {
-                try {
-                  control.Progress moveDisk = await _gameHelper.moveDisk(3);
-                  _updateDiskMoved(moveDisk);
-                  _gameHelper.eventControllerPin3
-                      .firePinChangedEvent(moveDisk.disksThirdPin());
-                  if (moveDisk.isGameOver) {
-                    _showGameOver(context, moveDisk);
-                  }
-                } on ArgumentError catch(e) {
-                  _talkToPlayer(e.message);
-                } on StateError catch(e) {
-                  _talkToPlayer(e.message);
-                }
-              },
-              child: _currentProgress == null ? Text("Loading...") :
-                        Pin(key: UniqueKey(), disks: _currentProgress.disksThirdPin(),
-                              eventController: _gameHelper.eventControllerPin3)
+          child: PinsRepository(
+            gameHelper: _gameHelper,
+            pinDisks: _currentProgress.disksThirdPin(),
+            pinEventController: _gameHelper.eventControllerPin3,
+            pinNumber: 3,
+            onMoveComplete: _updateDiskMoved,
+            onMoveError: _talkToPlayer,
+            onGameOver: _showGameOver,
           )
       ),
     ];
@@ -336,5 +315,41 @@ class _GameState extends State<Game> {
 
     final result = prefs.getInt('totalDisks') == null ? 3 : prefs.getInt('totalDisks');
     return result;
+  }
+}
+
+class PinsRepository extends StatelessWidget {
+
+  final control.PinDisks pinDisks;
+  final PinEventController pinEventController;
+  final Function onMoveError;
+  final Function onMoveComplete;
+  final Function onGameOver;
+  final GameHelper gameHelper;
+  final int pinNumber;
+
+  const PinsRepository({Key key, this.pinDisks, this.pinEventController,
+    this.onMoveError, this.gameHelper, this.pinNumber, this.onMoveComplete,
+    this.onGameOver}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () async {
+        try  {
+          control.Progress moveDisk = await gameHelper.moveDisk(pinNumber);
+          onMoveComplete(moveDisk);
+          if (moveDisk.isGameOver) {
+            onGameOver(context, moveDisk);
+          }
+        } on ArgumentError catch(e) {
+          onMoveError(e.message);
+        } on StateError catch(e) {
+          onMoveError(e.message);
+        }
+      },
+      child: Pin(key: UniqueKey(), disks: pinDisks,
+          eventController: pinEventController),
+    );
   }
 }
