@@ -61,7 +61,7 @@ void main() {
 
     await tester.pumpWidget(MaterialApp(home: ui_game.Disk(disk: grabDiskProgress.diskGrabbed, eventController: DiskEventController(mockEventEmitter))));
 
-    await expectLater(find.byType(ui_game.Disk), matchesGoldenFile('disk_start_with_smallest.png'));
+    await expectLater(find.byType(ui_game.DiskView), matchesGoldenFile('disk_start_with_smallest.png'));
   });
 
   testWidgets('Golden test passes when starts with null disk', (WidgetTester tester) async {
@@ -70,6 +70,6 @@ void main() {
 
     await tester.pumpWidget(MaterialApp(home: ui_game.Disk(disk: null, eventController: DiskEventController(mockEventEmitter))));
 
-    await expectLater(find.byType(ui_game.Disk), matchesGoldenFile('disk_start_with_null_disk.png'));
+    await expectLater(find.byType(ui_game.DiskView), matchesGoldenFile('disk_start_with_null_disk.png'));
   });
 }
