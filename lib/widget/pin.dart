@@ -18,6 +18,20 @@ final List<Color> _diskColors = List.unmodifiable([
 
 final Color _pinColor = Colors.grey.shade700;
 
+class Position {
+  final double x;
+  final double y;
+
+  const Position({this.x, this.y});
+}
+
+class Dimension {
+  final double width;
+  final double height;
+
+  Dimension(this.width, this.height);
+}
+
 class Pin extends StatefulWidget {
 
   final control.PinDisks disks;
@@ -55,68 +69,14 @@ class _PinState extends State<Pin> with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return _buildPin(context, _pinDisks);
-  }
-
-  Stack _buildPin(BuildContext context, pinDisks) {
     return Stack(
-      children: _insertDisks(context, pinDisks),
+        children: <Widget>[
+          PinView(),
+          DiskStacker(pinDisks: _pinDisks,)
+        ]
     );
   }
 
-  List<Widget> _insertDisks(BuildContext context, pinDisks) {
-    var availableHeight = MediaQuery.of(context).size.height;
-    if (MediaQuery.of(context).orientation == Orientation.portrait) {
-      availableHeight = availableHeight / 3;
-    }
-
-    var availableWidth = MediaQuery.of(context).size.width;
-    if (MediaQuery.of(context).orientation == Orientation.landscape) {
-      availableWidth = availableWidth / 3;
-    }
-    var result =  <Widget>[
-      Positioned(
-          left: _calculateMiddle(availableWidth, 7),
-          bottom: 30,
-          child: SizedBox(
-            width: 7.0,
-            height: _calculateDiskHeight(context) * 10 + 5,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                  color: _pinColor
-              ),
-            ),
-          )
-      ),
-
-      Positioned(
-        bottom: 20,
-        left: _calculateMiddle(availableWidth, _calculateDiskWidth(availableWidth, 10)),
-        child: SizedBox(
-          width: availableWidth * reduceDiskFactor,
-          height: 10.0,
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-                color: _pinColor
-            ),
-          ),
-        ),
-      ),
-    ];
-
-
-    if (pinDisks != null) {
-      var floor = 30.0;
-      var disks = pinDisks.disks.reversed;
-      disks.forEach((disk) {
-        var left = _calculateMiddle(availableWidth, _calculateDiskWidth(availableWidth, disk.size));
-        result.add(_createDisk(context, floor, left, disk.size, availableWidth));
-        floor = floor + _calculateDiskHeight(context);
-      });
-    }
-
-    return result;
-  }
 
   _update(control.PinDisks newPinDisks) {
     if (this.mounted) {
@@ -130,40 +90,93 @@ class _PinState extends State<Pin> with AutomaticKeepAliveClientMixin {
   bool get wantKeepAlive => true;
 }
 
-final double reduceDiskFactor = 0.95;
+class PinView extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: <Widget>[
+        Positioned(
+            left: _calculateMiddle(context, 10) + 7,
+            bottom: 30,
+            child: SizedBox(
+              width: 10.0,
+              height: 10.0 * (MediaQuery.of(context).orientation == Orientation.landscape ? 24 : 15),
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                    color: _pinColor
+                ),
+              ),
+            )
+        ),
 
-Widget _createDisk(BuildContext context, double positionTop,
-                double positionLeft ,int diskSize, double availableWidth) {
+        Positioned(
+          bottom: 20,
+          left: 7,
+          child: SizedBox(
+            width: _calculateAvailableWidth(context),
+            height: 10.0,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                  color: _pinColor
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
 
-  if (diskSize < 1) return _createDiskZero(positionTop, positionLeft);
+class DiskStacker extends StatelessWidget {
 
-  return Positioned(
-    bottom: positionTop,
-    left: positionLeft, //,
-    child: SizedBox(
-      width: _calculateDiskWidth(availableWidth, diskSize),
-      height: _calculateDiskHeight(context),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-            color: _diskColors.elementAt(diskSize-1)
+  final control.PinDisks pinDisks;
+  final double floor = 30.0;
+
+  const DiskStacker({Key key, this.pinDisks}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children:
+        this.pinDisks.disks.reversed.toList().asMap().map((index, disk) =>
+            MapEntry(index, DiskView(position: _calculatePosition(context, disk, index),
+                disk: disk))).values.toList(growable: false),
+    );
+  }
+
+  Position _calculatePosition(BuildContext context, control.Disk disk, int index) {
+    double x = _calculateMiddle(context, _calculateDiskWidth(context, disk)) + 7;
+    double y = floor + _calculateDiskHeight(context, disk) * index;
+    return Position(x: x, y: y);
+  }
+}
+
+
+
+class DiskView extends StatelessWidget {
+
+  final Position position;
+  final control.Disk disk;
+
+  const DiskView({Key key, this.position, this.disk}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      bottom: position.y,
+      left: position.x,
+      child: disk == null ? SizedBox() : SizedBox(
+        width: _calculateDiskWidth(context, disk),
+        height: _calculateDiskHeight(context, disk),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+              color: _diskColors.elementAt(disk.size-1)
+          ),
         ),
       ),
-    ),
-  );
+    );
+  }
 }
-
-Widget _createDiskZero(double positionTop, double positionLeft) {
-  return Positioned(
-    bottom: positionTop,
-    left: positionLeft, //,
-    child: SizedBox(
-    ),
-  );
-}
-
-_calculateMiddle(totalWidth, diskWidth) => totalWidth / 2 - ( diskWidth / 2 );
-
-_calculateDiskWidth(double availableWidth, int diskSize) => availableWidth * reduceDiskFactor - 20 * ( 10 - diskSize );
 
 
 class Disk extends StatefulWidget {
@@ -194,26 +207,33 @@ class _DiskState extends State<Disk> {
 
   @override
   Widget build(BuildContext context) {
-    var availableWidth = MediaQuery.of(context).size.width;
-    var parts = MediaQuery.of(context).orientation == Orientation.landscape ? 3 : 1;
-    var diskSize = _disk == null ? 0 : _disk.size;
 
     return Stack (
       children: <Widget>[
         Scaffold(
         ),
-        _createDisk(context, 1, 20, diskSize, availableWidth/parts)
+        DiskView(disk: _disk,
+            position: Position(x: 20, y: 1)
+        ),
       ],
     );
   }
 
-  _update(control.Disk newDisk) {
+  _update(control.Disk disk) {
     setState(() {
-      this._disk = newDisk;
+      this._disk = disk;
     });
   }
 }
 
-double _calculateDiskHeight(BuildContext context) {
-  return MediaQuery.of(context).orientation == Orientation.landscape ? 24 : 15;
-}
+double _calculateDiskHeight(BuildContext context, control.Disk disk) =>
+  disk == null ? 0 : MediaQuery.of(context).orientation == Orientation.landscape ? 24 : 15;
+
+double _calculateDiskWidth(BuildContext context, control.Disk disk) =>
+    disk == null ? 0 : _calculateAvailableWidth(context) - 20 * (10 - disk.size);
+
+double _calculateAvailableWidth(BuildContext context) =>
+    MediaQuery.of(context).size.width / (MediaQuery.of(context).orientation == Orientation.landscape ? 3 : 1) * 0.95;
+
+double _calculateMiddle(BuildContext context, diskWidth) => _calculateAvailableWidth(context) / 2 - ( diskWidth / 2 );
+
