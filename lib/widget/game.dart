@@ -104,7 +104,7 @@ class GameHelper {
 
   control.Progress get lastProgress => _lastProgress;
 
-  bool get isGameStarted => false;
+  bool get isGameStarted => _lastProgress != null;
 }
 
 
